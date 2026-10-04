@@ -29,6 +29,8 @@ Argentina cuenta con un instrumento legal sobre ese activo: el **warrant**, un t
 
 ## Por qué importa
 
+Zafra entra en la categoría **RWA (Real World Assets)**: el colateral no es un activo nativo de cripto, es grano real, guardado y certificado, representado on-chain. La blockchain no crea el activo; le da un mercado de crédito abierto.
+
 ### Para el productor
 - **Capital sin vender la cosecha.** Puede esperar un mejor precio sin quedarse sin plata para trabajar.
 - **En segundos, no en semanas.** El préstamo se acredita apenas se firma la transacción.
@@ -113,6 +115,12 @@ El ciclo completo corre en la cadena y es verificable en el explorador:
 7. **Auditoría y marco regulatorio** antes de cualquier uso con dinero real.
 
 ---
+
+## Por qué construí Zafra
+
+Este proyecto no salió de una idea en el aire. Antes de escribir una línea de código me puse a investigar el mercado en serio: la Ley 9.643 y lo que habilitó el DNU 70/2023, las plataformas que ya lanzaron A3 Mercados y Matba Rofex, los volúmenes de warrants que se emiten por año y cómo funciona el crédito rural hoy.
+
+La conclusión fue que hay una oportunidad real. El activo existe, el marco legal existe, la digitalización ya arrancó, y la pieza que sigue faltando es el crédito abierto contra ese warrant. Zafra es mi intento de construir esa pieza.
 
 ## Una nota honesta sobre el estado
 
