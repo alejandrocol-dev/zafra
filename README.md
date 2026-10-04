@@ -118,17 +118,17 @@ El ciclo completo corre en la cadena y es verificable en el explorador:
 
 ## Por qué construí Zafra
 
-Este proyecto no salió de una idea en el aire. Antes de escribir una línea de código me puse a investigar el mercado en serio: la Ley 9.643 y lo que habilitó el DNU 70/2023, las plataformas que ya lanzaron A3 Mercados y Matba Rofex, los volúmenes de warrants que se emiten por año y cómo funciona el crédito rural hoy.
+Este proyecto no salió de una idea en el aire. Antes de meterme con los agentes me puse a investigar el mercado en serio: la Ley 9.643 y lo que habilitó el DNU 70/2023, las plataformas que ya lanzaron A3 Mercados y Matba Rofex, los volúmenes de warrants que se emiten por año y cómo funciona el crédito rural hoy.
 
-La conclusión fue que hay una oportunidad real. El activo existe, el marco legal existe, la digitalización ya arrancó, y la pieza que sigue faltando es el crédito abierto contra ese warrant. Zafra es mi intento de construir esa pieza.
+La conclusión que tuve es que hay una oportunidad real. El activo existe, el marco legal existe, la digitalización ya arrancó, y la pieza que sigue faltando es el crédito abierto contra ese warrant. Zafra es mi intento de construir esa pieza.
 
 ## Una nota honesta sobre el estado
 
-Zafra llegó a esta entrega más ajustado de lo que me hubiera gustado. Entre el tiempo de la hackathon y una conexión de internet poco confiable, no todo el pulido llegó a hacerse. La app funciona y hace lo que promete, pero el diseño todavía tiene margen: quiero transiciones más cuidadas, una mejor jerarquía visual en mobile y estados más ricos en cada pantalla.
+Zafra llegó a esta entrega más ajustado de lo que me hubiera gustado. Entre el tiempo de la hackathon y una conexión de internet inestable en mi casa, no todo el pulido llegó a hacerse. La app funciona y hace lo que promete, pero el diseño todavía tiene margen: quiero transiciones más cuidadas, una mejor jerarquía visual, diseño original y atractivo,estados más ricos en cada pantalla y un monton de detalles que aún no pude agregar.
 
 El logo del choclo tampoco es el definitivo: se hizo con lo que el tiempo permitió y está en la lista de cosas a iterar.
 
-Elegí deliberadamente presentar el sistema completo funcionando de verdad: emitir, prestar, devolver y liquidar, todo en devnet, antes que una interfaz perfecta sobre datos falsos. Lo próximo es cerrar esa brecha.
+Elegí deliberadamente presentar el sistema completo funcionando de verdad: emitir, prestar, devolver y liquidar, todo en devnet, antes que una interfaz perfecta sobre datos falsos. Lo próximo es cerrar esa brecha, si se me permite.
 
 ---
 
