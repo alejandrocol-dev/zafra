@@ -15,13 +15,13 @@ El productor deja su warrant de garantía y recibe un préstamo en dólares digi
 
 ---
 
-## La cosecha existe; el capital, no
+## El problema: valor inmóvil en el silo
 
-En el NOA un productor puede tener cien toneladas de soja guardadas en un silobolsa, casi cuarenta mil dólares de mercadería, y no tener un peso para arrancar la zafra. La semilla, el combustible y las deudas no esperan a que se venda el grano.
+El grano cosechado y almacenado es un activo real pero ilíquido. Un productor puede tener cien toneladas de soja en un silobolsa, unos cuarenta mil dólares de mercadería, y no disponer de capital de trabajo para la campaña siguiente. Semillas, combustible y obligaciones financieras se pagan en calendario de siembra, no de venta.
 
-Argentina ya tiene un instrumento para resolver eso: el **warrant**, un título legal sobre la mercadería depositada. Pero hoy ese warrant solo sirve para pedirle crédito a un banco o a un ALyC: es un proceso bilateral, con papeles y tiempos que no siempre coinciden con los de la campaña.
+Argentina cuenta con un instrumento legal sobre ese activo: el **warrant**, un título de crédito que representa mercadería depositada (Ley 9.643). En la práctica su uso como garantía queda limitado al circuito bancario y de ALyCs: operaciones bilaterales, documentación manual y plazos de aprobación que no se alinean con los tiempos de la campaña.
 
-**Zafra convierte el warrant en crédito disponible.** El warrant se vuelve un token, un token por tonelada. El productor lo deja de garantía y un fondo abierto de dólares digitales le presta contra él. Cuando devuelve, recupera su warrant. Si el precio del grano cae demasiado, la garantía se liquida sola.
+**Zafra convierte el warrant en garantía programable.** El documento se tokeniza on-chain a razón de un token por tonelada, el productor lo deposita como colateral en el programa y un pool abierto de liquidez en USDC le origina el préstamo. Al repagar, el colateral se libera. Si el precio del grano perfora el umbral de liquidación, la posición se liquida automáticamente.
 
 > Por eso existe Zafra: porque la zafra no espera.
 
