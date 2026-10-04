@@ -1,0 +1,22 @@
+skip_local_validator = true
+
+[toolchain]
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+zafra = "AERC53ZiqizgjYdJK9hCeGtSk6PfzwnEn2z3wkMKiqiJ"
+
+[programs.devnet]
+zafra = "AERC53ZiqizgjYdJK9hCeGtSk6PfzwnEn2z3wkMKiqiJ"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "cargo test"
+
+[hooks]
