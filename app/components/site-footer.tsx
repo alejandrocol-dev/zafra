@@ -10,7 +10,7 @@ export function SiteFooter() {
   const t = useT();
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto max-w-6xl space-y-3 px-4 py-8 text-xs text-faint sm:px-6">
+      <div className="mx-auto max-w-[1180px] space-y-3 px-4 py-8 text-xs text-faint sm:px-8">
         <p className="max-w-3xl leading-relaxed">{t("footer.disclaimer")}</p>
         <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
           <a

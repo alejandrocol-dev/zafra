@@ -59,7 +59,7 @@ export function WalletButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
               setOpen(false);
               void disconnect();
             }}
-            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-mute hover:bg-white/10 hover:text-ink"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-mute hover:bg-ink/5 hover:text-ink"
           >
             <LogOut className="size-4" aria-hidden />
             {locale === "es" ? "Desconectar" : "Disconnect"}

@@ -39,7 +39,7 @@ const toneSoft: Record<Tone, string> = {
   warn: "border-warn/30 bg-warn/10 text-warn",
   danger: "border-danger/30 bg-danger/10 text-danger",
   info: "border-info/30 bg-info/10 text-info",
-  neutral: "border-line-strong bg-white/5 text-mute",
+  neutral: "border-line-strong bg-ink/[0.03] text-mute",
 };
 const toneBar: Record<Tone, string> = {
   brand: "bg-brand",
@@ -78,7 +78,7 @@ export function Card({
       {(title || actions) && (
         <header className="mb-4 flex items-start justify-between gap-3">
           <div className="min-w-0">
-            {title && <h3 className="text-base font-semibold text-ink">{title}</h3>}
+            {title && <h3 className="text-[15px] font-bold text-ink">{title}</h3>}
             {subtitle && <p className="mt-0.5 text-sm text-mute">{subtitle}</p>}
           </div>
           {actions}
@@ -99,9 +99,9 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">{title}</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-[32px]">{title}</h1>
         {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-mute sm:text-base">{subtitle}</p>}
       </div>
       {actions}
@@ -123,12 +123,12 @@ export function Stat({
   tip?: string;
 }) {
   return (
-    <div className="rounded-xl border border-line bg-sunken px-4 py-3.5">
+    <div className="rounded-2xl border border-line bg-surface px-4 py-4 shadow-(--shadow-card)">
       <p className="flex items-center gap-1.5 text-xs font-medium text-mute">
         {label}
         {tip && <InfoTip text={tip} />}
       </p>
-      <p className={cx("mt-1 text-xl font-semibold tracking-tight", tone ? toneText[tone] : "text-ink")}>
+      <p className={cx("mt-1.5 font-display text-lg font-bold leading-tight tracking-tight xl:text-xl", tone ? toneText[tone] : "text-ink")}>
         {value}
       </p>
       {hint && <p className="mt-0.5 text-xs text-faint">{hint}</p>}
@@ -247,7 +247,7 @@ export function AmountInput({
           <button
             type="button"
             onClick={onMax}
-            className="rounded-md bg-white/10 px-2 py-1 text-xs font-semibold text-ink hover:bg-white/15"
+            className="rounded-md bg-ink/[0.06] px-2 py-1 text-xs font-semibold text-ink hover:bg-ink/10"
           >
             {t("common.max")}
           </button>
@@ -260,14 +260,15 @@ export function AmountInput({
 
 /* --------------------------------- buttons --------------------------------- */
 
-type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
+type ButtonVariant = "primary" | "lime" | "secondary" | "danger" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
 
 const buttonVariants: Record<ButtonVariant, string> = {
-  primary: "bg-brand text-brand-ink hover:bg-brand-strong font-semibold shadow-[0_0_0_1px_rgba(255,255,255,0.1)_inset]",
-  secondary: "border border-line-strong bg-elevated text-ink hover:bg-white/10 font-medium",
+  primary: "bg-navy text-white hover:bg-navy-soft font-semibold shadow-[0_1px_2px_rgba(6,25,61,0.2)]",
+  lime: "bg-brand text-brand-ink hover:brightness-95 font-semibold shadow-[0_1px_2px_rgba(6,25,61,0.15)]",
+  secondary: "border border-line-strong bg-surface text-ink hover:bg-sunken font-medium",
   danger: "bg-danger text-white hover:bg-danger/85 font-semibold",
-  ghost: "text-mute hover:text-ink hover:bg-white/5 font-medium",
+  ghost: "text-mute hover:text-ink hover:bg-ink/5 font-medium",
 };
 const buttonSizes: Record<ButtonSize, string> = {
   sm: "h-8 px-3 text-xs rounded-lg",
@@ -407,7 +408,7 @@ export function Skeleton({ className }: { className?: string }) {
 export function ProgressBar({ value, tone = "brand" }: { value: number; tone?: Tone }) {
   const pct = Math.min(Math.max(value, 0), 1) * 100;
   return (
-    <div className="h-2 overflow-hidden rounded-full bg-white/10">
+    <div className="h-2 overflow-hidden rounded-full bg-ink/[0.07]">
       <div className={cx("h-full rounded-full transition-all duration-500", toneBar[tone])} style={{ width: `${pct}%` }} />
     </div>
   );

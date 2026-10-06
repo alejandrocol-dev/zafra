@@ -33,7 +33,9 @@ import idlJson from "../idl/zafra.json";
 import type { Zafra } from "./zafra.idl";
 import {
   accruedDebt,
+  activityKindFromLogs,
   AgroError,
+  type Activity,
   ZafraError,
   collateralValue,
   healthFactor,
@@ -574,6 +576,23 @@ export class RealZafraClient implements ZafraClient {
   async getAllWarrants(): Promise<Warrant[]> {
     const all = await this.program.account.warrant.all();
     return all.map((w) => toWarrant(w.publicKey, w.account as DecodedWarrant));
+  }
+
+  /** Latest program signatures, labelled by the instruction in their logs. */
+  async getRecentActivity(limit = 10): Promise<Activity[]> {
+    const connection = this.provider.connection;
+    const sigs = await connection.getSignaturesForAddress(PROGRAM_ID, { limit }, "confirmed");
+    if (sigs.length === 0) return [];
+    const txs = await connection.getTransactions(
+      sigs.map((s) => s.signature),
+      { commitment: "confirmed", maxSupportedTransactionVersion: 0 },
+    );
+    return sigs.map((s, i) => ({
+      signature: s.signature,
+      kind: activityKindFromLogs(txs[i]?.meta?.logMessages),
+      blockTime: s.blockTime ?? null,
+      failed: s.err !== null,
+    }));
   }
 
   private signer(): PublicKey {

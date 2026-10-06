@@ -100,6 +100,20 @@ export function useFmt() {
         const pct = bps / 100;
         return `${num(pct, Number.isInteger(pct) ? 0 : 2)}%`;
       },
+      /** "3 minutes ago" / "hace 3 minutos". */
+      ago: (unixSec: number) => {
+        const rtf = new Intl.RelativeTimeFormat(tag, { numeric: "auto" });
+        const diff = unixSec - Date.now() / 1000;
+        const units: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+          ["day", 86_400],
+          ["hour", 3_600],
+          ["minute", 60],
+        ];
+        for (const [unit, sec] of units) {
+          if (Math.abs(diff) >= sec) return rtf.format(Math.round(diff / sec), unit);
+        }
+        return rtf.format(Math.round(diff), "second");
+      },
       date: (unixSec: number) =>
         new Date(unixSec * 1000).toLocaleDateString(tag, {
           year: "numeric",

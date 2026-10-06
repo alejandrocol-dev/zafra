@@ -98,7 +98,7 @@ export function TxDialog(props: TxDialogProps) {
   return (
     <Dialog.Root open={open} onOpenChange={(o) => (busy ? undefined : onOpenChange(o))}>
       <Dialog.Portal>
-        <Dialog.Overlay className="av-overlay fixed inset-0 z-40 bg-black/70 backdrop-blur-sm" />
+        <Dialog.Overlay className="av-overlay fixed inset-0 z-40 bg-navy/45 backdrop-blur-sm" />
         <Dialog.Content
           onInteractOutside={(e) => busy && e.preventDefault()}
           onEscapeKeyDown={(e) => busy && e.preventDefault()}
@@ -124,7 +124,7 @@ export function TxDialog(props: TxDialogProps) {
               <Dialog.Close asChild>
                 <button
                   aria-label={t("common.close")}
-                  className="rounded-lg p-1.5 text-mute hover:bg-white/10 hover:text-ink"
+                  className="rounded-lg p-1.5 text-mute hover:bg-ink/5 hover:text-ink"
                 >
                   <X className="size-4" aria-hidden />
                 </button>

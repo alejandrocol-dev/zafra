@@ -186,6 +186,42 @@ export interface WalletBalances {
   usdc: number;
 }
 
+/** Program instruction a transaction executed (read from its logs). */
+export type ActivityKind =
+  | "initialize"
+  | "setPrice"
+  | "registerWarrant"
+  | "depositLiquidity"
+  | "borrow"
+  | "repay"
+  | "liquidate"
+  | "other";
+
+/** One recent program transaction — what the activity feed shows. */
+export interface Activity {
+  signature: string;
+  kind: ActivityKind;
+  /** Unix seconds (null if the RPC didn't report it). */
+  blockTime: number | null;
+  failed: boolean;
+}
+
+/** Map an Anchor "Program log: Instruction: Xyz" line to an ActivityKind. */
+export function activityKindFromLogs(logs: readonly string[] | null | undefined): ActivityKind {
+  const line = logs?.find((l) => l.startsWith("Program log: Instruction: "));
+  const name = line?.slice("Program log: Instruction: ".length).trim().toLowerCase();
+  const map: Record<string, ActivityKind> = {
+    initialize: "initialize",
+    setprice: "setPrice",
+    registerwarrant: "registerWarrant",
+    depositliquidity: "depositLiquidity",
+    borrow: "borrow",
+    repay: "repay",
+    liquidate: "liquidate",
+  };
+  return (name && map[name]) || "other";
+}
+
 /** Demo reference price (USDC per ton) used by the "reset" button and the demo guide. */
 export const DEFAULT_PRICE_PER_TON = 380;
 
@@ -216,6 +252,8 @@ export interface ZafraClient {
   siloIdExists(siloId: string): Promise<boolean>;
   /** Every warrant in the program (for KPIs and Silo ID suggestions). */
   getAllWarrants(): Promise<Warrant[]>;
+  /** Most recent program transactions, newest first (activity feed). */
+  getRecentActivity(limit?: number): Promise<Activity[]>;
 
   /** Instruction: register_warrant (certifier only on-chain). */
   registerWarrant(
@@ -319,6 +357,7 @@ interface MockState {
   poolTotal: number;
   warrants: Warrant[];
   loans: Loan[];
+  activity: Activity[];
 }
 
 const DAY = 24 * 60 * 60;
@@ -371,7 +410,23 @@ function seed(): MockState {
     status: LoanStatus.Open,
   }));
 
-  return { config, poolTotal: 400_000, warrants: [w1, w2, w3], loans };
+  const kinds: Array<[ActivityKind, number]> = [
+    ["borrow", 6 * DAY],
+    ["registerWarrant", 7 * DAY],
+    ["borrow", 21 * DAY],
+    ["registerWarrant", 22 * DAY],
+    ["depositLiquidity", 25 * DAY],
+    ["setPrice", 26 * DAY],
+    ["initialize", 26 * DAY + 60],
+  ];
+  const activity = kinds.map(([kind, ago]) => ({
+    signature: fakeSig(),
+    kind,
+    blockTime: nowSec() - ago,
+    failed: false,
+  }));
+
+  return { config, poolTotal: 400_000, warrants: [w1, w2, w3], loans, activity };
 }
 
 class MockZafraClient implements ZafraClient {
@@ -430,6 +485,11 @@ class MockZafraClient implements ZafraClient {
     return this.state.warrants.map((w) => ({ ...w }));
   }
 
+  async getRecentActivity(limit = 10): Promise<Activity[]> {
+    await delay();
+    return this.state.activity.slice(0, limit).map((a) => ({ ...a }));
+  }
+
   async getPoolStats(): Promise<PoolStats> {
     await delay();
     const outstanding = this.state.loans
@@ -461,7 +521,7 @@ class MockZafraClient implements ZafraClient {
       WarrantStatus.Issued,
     );
     this.state.warrants.push(warrant);
-    return { signature: fakeSig(), warrant: { ...warrant } };
+    return { signature: this.log("registerWarrant"), warrant: { ...warrant } };
   }
 
   async borrow(warrantAddress: string): Promise<TxResult & { loan: Loan }> {
@@ -491,7 +551,7 @@ class MockZafraClient implements ZafraClient {
     };
     this.state.loans.push(loan);
     warrant.status = WarrantStatus.InCustody;
-    return { signature: fakeSig(), loan: { ...loan } };
+    return { signature: this.log("borrow"), loan: { ...loan } };
   }
 
   async repay(warrantAddress: string): Promise<TxResult> {
@@ -505,21 +565,21 @@ class MockZafraClient implements ZafraClient {
     this.state.poolTotal += debt - loan.principal;
     loan.status = LoanStatus.Repaid;
     warrant.status = WarrantStatus.Released;
-    return { signature: fakeSig() };
+    return { signature: this.log("repay") };
   }
 
   async depositLiquidity(amount: number): Promise<TxResult> {
     await delay();
     if (!(amount > 0)) throw new ZafraError(AgroError.MathOverflow);
     this.state.poolTotal += amount;
-    return { signature: fakeSig() };
+    return { signature: this.log("depositLiquidity") };
   }
 
   async setPrice(pricePerTon: number): Promise<TxResult> {
     await delay();
     if (!(pricePerTon > 0)) throw new ZafraError(AgroError.MathOverflow);
     this.state.config.pricePerTon = pricePerTon;
-    return { signature: fakeSig() };
+    return { signature: this.log("setPrice") };
   }
 
   async liquidate(warrantAddress: string): Promise<TxResult> {
@@ -532,10 +592,16 @@ class MockZafraClient implements ZafraClient {
     }
     loan.status = LoanStatus.Liquidated;
     warrant.status = WarrantStatus.Liquidated;
-    return { signature: fakeSig() };
+    return { signature: this.log("liquidate") };
   }
 
   // -- internals ------------------------------------------------------------
+
+  private log(kind: ActivityKind): string {
+    const signature = fakeSig();
+    this.state.activity.unshift({ signature, kind, blockTime: nowSec(), failed: false });
+    return signature;
+  }
 
   private mustWarrant(address: string): Warrant {
     const warrant = this.state.warrants.find((w) => w.address === address);
@@ -685,6 +751,9 @@ class ZafraRouter implements ZafraClient {
   }
   getAllWarrants() {
     return this.read("allWarrants", (c) => c.getAllWarrants());
+  }
+  getRecentActivity(limit = 10) {
+    return this.read(`activity:${limit}`, (c) => c.getRecentActivity(limit), 20_000);
   }
   registerWarrant(input: RegisterWarrantInput) {
     return this.write((c) => c.registerWarrant(input));
