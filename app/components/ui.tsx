@@ -59,6 +59,7 @@ export function Card({
   children,
   className,
   tone,
+  tour,
 }: {
   title?: ReactNode;
   subtitle?: ReactNode;
@@ -66,9 +67,12 @@ export function Card({
   children?: ReactNode;
   className?: string;
   tone?: Tone;
+  /** Anchor for the guided tour (`data-tour`). */
+  tour?: string;
 }) {
   return (
     <section
+      data-tour={tour}
       className={cx(
         "rounded-(--radius-card) border bg-surface p-5 shadow-(--shadow-card) sm:p-6",
         tone === "warn" ? "border-warn/40" : tone === "danger" ? "border-danger/40" : "border-line",
@@ -99,7 +103,7 @@ export function PageHeader({
   actions?: ReactNode;
 }) {
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+    <div data-tour="page-header" className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
         <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-[32px]">{title}</h1>
         {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-mute sm:text-base">{subtitle}</p>}
@@ -352,15 +356,18 @@ export function Notice({
   children,
   action,
   className,
+  tour,
 }: {
   tone?: Tone;
   title?: ReactNode;
   children?: ReactNode;
   action?: ReactNode;
   className?: string;
+  tour?: string;
 }) {
   return (
     <div
+      data-tour={tour}
       role={tone === "danger" || tone === "warn" ? "alert" : "status"}
       className={cx("flex gap-3 rounded-xl border px-4 py-3", toneSoft[tone], className)}
     >

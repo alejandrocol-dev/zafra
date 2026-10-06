@@ -52,22 +52,25 @@ export function OverviewView() {
     <div className="space-y-6">
       <DemoHero onGo={setView} />
 
-      {error && !data ? (
-        <Notice
-          tone="warn"
-          action={
-            <Button size="sm" variant="secondary" onClick={reload}>
-              {t("common.retry")}
-            </Button>
-          }
-        >
-          {t("overview.kpi.error")}
-        </Notice>
-      ) : (
-        <Kpis loading={loading && !data} stats={data?.stats} config={data?.config} warrants={data?.warrants} />
-      )}
+      <div data-tour="kpis">
+        {error && !data ? (
+          <Notice
+            tone="warn"
+            action={
+              <Button size="sm" variant="secondary" onClick={reload}>
+                {t("common.retry")}
+              </Button>
+            }
+          >
+            {t("overview.kpi.error")}
+          </Notice>
+        ) : (
+          <Kpis loading={loading && !data} stats={data?.stats} config={data?.config} warrants={data?.warrants} />
+        )}
+      </div>
 
       <Card
+        tour="simulator"
         title={t("sim.title")}
         subtitle={t("sim.subtitle", { price: DEFAULT_PRICE_PER_TON })}
         actions={<Badge tone="warn">{t("sim.oracleBadge")}</Badge>}
@@ -94,7 +97,7 @@ export function OverviewView() {
             <Skeleton className="h-48" />
           )}
         </Card>
-        <Card title={t("activity.title")} subtitle={t("activity.subtitle")}>
+        <Card tour="activity" title={t("activity.title")} subtitle={t("activity.subtitle")}>
           <ActivityFeed limit={6} />
         </Card>
       </div>
@@ -163,7 +166,7 @@ function DemoHero({ onGo }: { onGo: (v: View) => void }) {
   const count = done.filter(Boolean).length;
 
   return (
-    <section id="demo" className="relative overflow-hidden rounded-[24px] bg-navy p-6 text-white shadow-(--shadow-float) sm:p-8">
+    <section id="demo" data-tour="demo" className="relative overflow-hidden rounded-[24px] bg-navy p-6 text-white shadow-(--shadow-float) sm:p-8">
       <div aria-hidden className="av-grid pointer-events-none absolute inset-0 opacity-50" />
       <div aria-hidden className="pointer-events-none absolute -left-20 -top-24 size-72 rounded-full bg-brand/25 blur-3xl" />
       <ZafraMark white className="pointer-events-none absolute -bottom-10 left-[36%] hidden size-52 opacity-[0.06] lg:block" />

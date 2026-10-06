@@ -87,12 +87,12 @@ export function CertifierView() {
   return (
     <div>
       <PageHeader title={t("cert.title")} subtitle={t("cert.subtitle")} />
-      <Notice tone="warn" title={t("cert.banner.title")} className="mb-6">
+      <Notice tour="cert-role" tone="warn" title={t("cert.banner.title")} className="mb-6">
         {t("cert.banner.body")}
       </Notice>
 
       <div className="grid gap-5 lg:grid-cols-5">
-        <Card className="lg:col-span-3">
+        <Card tour="cert-form" className="lg:col-span-3">
           <form
             className="space-y-5"
             onSubmit={(e) => {
@@ -205,7 +205,7 @@ export function CertifierView() {
               {t("cert.issued.body", { tons: f.tons(issued.tons), silo: issued.siloId })}
             </Notice>
           )}
-          <Card title={t("cert.how.title")}>
+          <Card tour="cert-how" title={t("cert.how.title")}>
             <ul className="space-y-3 text-sm text-mute">
               {(["cert.how.1", "cert.how.2", "cert.how.3"] as const).map((k) => (
                 <li key={k} className="flex gap-2.5">

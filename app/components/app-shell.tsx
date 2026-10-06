@@ -1,9 +1,10 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
+  Compass,
   ExternalLink,
   HandCoins,
   LayoutDashboard,
@@ -16,6 +17,7 @@ import { useT, type MessageKey } from "@/lib/i18n";
 import { useView, type View } from "@/lib/nav";
 import { explorerAddressUrl, shortenAddress } from "@/lib/format";
 import { cx } from "@/components/ui";
+import { GuidedTour, useTourAutoStart } from "./guided-tour";
 import { LocaleSwitch } from "./locale-switch";
 import { ZafraLockup, ZafraMark } from "./logo";
 import { SiteFooter } from "./site-footer";
@@ -77,9 +79,12 @@ function MobileLink({ item, active, demo }: { item: Item; active: boolean; demo?
 
 export function AppShell({ children }: { children: ReactNode }) {
   const t = useT();
-  const [view] = useView();
+  const [view, setView] = useView();
   const current = [...MAIN, ...TOOLS].find((i) => i.id === view) ?? MAIN[0];
   const isDemo = TOOLS.some((i) => i.id === view);
+  const [tourOpen, setTourOpen] = useState(false);
+  const openTour = () => setTourOpen(true);
+  useTourAutoStart(view, setTourOpen);
 
   return (
     <div className="flex min-h-dvh">
@@ -158,8 +163,19 @@ export function AppShell({ children }: { children: ReactNode }) {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={openTour}
+                aria-label={t("tour.buttonAria")}
+                className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-line-strong bg-surface px-3 text-sm font-semibold text-ink transition-colors hover:bg-sunken"
+              >
+                <Compass className="size-4 text-brand-strong" aria-hidden />
+                <span className="hidden sm:inline">{t("tour.button")}</span>
+              </button>
               <LocaleSwitch />
-              <WalletButton />
+              <div data-tour="wallet">
+                <WalletButton />
+              </div>
             </div>
           </div>
           <nav className="flex gap-1 overflow-x-auto border-t border-line px-4 py-2 lg:hidden" aria-label="Main">
@@ -175,6 +191,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         <main className="mx-auto w-full max-w-[1180px] flex-1 px-4 py-8 sm:px-8 sm:py-10">{children}</main>
         <SiteFooter />
       </div>
+
+      {tourOpen && (
+        <GuidedTour
+          key={view}
+          view={view}
+          onClose={() => setTourOpen(false)}
+          onContinue={(next, keepOpen) => {
+            setTourOpen(keepOpen);
+            setView(next);
+          }}
+        />
+      )}
     </div>
   );
 }

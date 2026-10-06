@@ -504,6 +504,69 @@ export const en = {
   "landing.cta.github": "View the code",
   "landing.footer.tagline": "Because the harvest doesn't wait.",
   "landing.footer.photos": "Photos: Fabian Holub, Paz Arando and Roger Starnes Sr on Unsplash.",
+
+  // ---- guided tour
+  "tour.button": "Guide",
+  "tour.buttonAria": "Open the guide for this screen",
+  "tour.label": "Guide · {screen}",
+  "tour.progress": "{n} of {total}",
+  "tour.back": "Back",
+  "tour.next": "Next",
+  "tour.done": "Got it",
+  "tour.skip": "Skip guide",
+  "tour.nextTab": "Next: {screen}",
+  "tour.finish": "Back to overview",
+  "tour.overview.1.title": "Welcome to Zafra",
+  "tour.overview.1.body":
+    "Zafra lends USDC against grain warrants on Solana devnet. This guide walks you through each screen in under a minute. Reopen it anytime with the Guide button, top right.",
+  "tour.overview.2.title": "The full cycle in 4 steps",
+  "tour.overview.2.body":
+    "These cards are the demo path: issue a warrant, borrow, simulate a price drop, then repay or liquidate. They tick themselves by reading your wallet on-chain.",
+  "tour.overview.3.title": "Live numbers from devnet",
+  "tour.overview.3.body":
+    "Pool liquidity, outstanding debt and tokenized grain are read straight from the program. Nothing here is mocked.",
+  "tour.overview.4.title": "Liquidation, made visible",
+  "tour.overview.4.body":
+    "Drag the price. You'll see exactly where an example loan crosses the 80% threshold and becomes liquidatable.",
+  "tour.overview.5.title": "Every transaction is verifiable",
+  "tour.overview.5.body":
+    "The latest program transactions. Each link opens Solana Explorer on devnet, so you can check them yourself.",
+  "tour.overview.6.title": "Connect Phantom on devnet",
+  "tour.overview.6.body":
+    "To act, use Phantom set to devnet — Solana's test network, where funds have no real value — with a little test SOL from the faucet for fees.",
+  "tour.certifier.1.title": "A simulated role, on purpose",
+  "tour.certifier.1.body":
+    "In production a licensed warehouse issues warrants. Here the contract only accepts the Zafra team's certifier wallet: with your own wallet you'll see the form, but signing is blocked.",
+  "tour.certifier.2.title": "Issue a warrant",
+  "tour.certifier.2.body":
+    "A unique Silo ID, the tons stored and the producer's wallet. Signing mints 1 token per ton straight into the producer's wallet.",
+  "tour.certifier.3.title": "What happens on-chain",
+  "tour.certifier.3.body":
+    "The program creates the warrant record and its token. From that moment the grain is programmable collateral.",
+  "tour.borrow.1.title": "Your warrants as collateral",
+  "tour.borrow.1.body":
+    "Every warrant in your wallet, valued at the oracle price, with the maximum loan (70%). No warrants yet? This screen points you to the Certifier.",
+  "tour.borrow.2.title": "Borrow, track and repay",
+  "tour.borrow.2.body":
+    "Borrowing locks the warrant in program custody and sends USDC instantly, minus a 0.75% fee. Then you see the debt grow in real time, a health gauge, and the button to repay and get the warrant back.",
+  "tour.admin.1.title": "Simulated oracle",
+  "tour.admin.1.body":
+    "In production the grain price comes from a real feed. Here only the team's admin wallet can change it — that's what drives the liquidation demo.",
+  "tour.admin.2.title": "Simulate a price drop",
+  "tour.admin.2.body":
+    "One click drops the on-chain price 30%. Open loans whose collateral falls below 80% of its value become liquidatable.",
+  "tour.admin.3.title": "Permissionless liquidation",
+  "tour.admin.3.body":
+    "Anyone can liquidate an under-collateralized loan — no admin needed. The pool keeps the warrant to cover the debt.",
+  "tour.earn.1.title": "The liquidity pool",
+  "tour.earn.1.body":
+    "Total, lent, available and indicative yield, all read from devnet. Borrowers draw from here.",
+  "tour.earn.2.title": "Supply USDC",
+  "tour.earn.2.body":
+    "Deposit test USDC into the pool. Interest and origination fees from loans flow back to it.",
+  "tour.earn.3.title": "Risks, stated plainly",
+  "tour.earn.3.body":
+    "Hackathon prototype: no withdrawals yet, simulated oracle and certifier, unaudited contract. That's the full tour — thanks for reviewing Zafra.",
 } as const;
 
 export type MessageKey = keyof typeof en;
@@ -1009,4 +1072,67 @@ export const es: Record<MessageKey, string> = {
   "landing.cta.github": "Ver el código",
   "landing.footer.tagline": "Porque la zafra no espera.",
   "landing.footer.photos": "Fotos: Fabian Holub, Paz Arando y Roger Starnes Sr en Unsplash.",
+
+  // ---- guía
+  "tour.button": "Guía",
+  "tour.buttonAria": "Abrir la guía de esta pantalla",
+  "tour.label": "Guía · {screen}",
+  "tour.progress": "{n} de {total}",
+  "tour.back": "Atrás",
+  "tour.next": "Siguiente",
+  "tour.done": "Entendido",
+  "tour.skip": "Saltear guía",
+  "tour.nextTab": "Siguiente: {screen}",
+  "tour.finish": "Volver al inicio",
+  "tour.overview.1.title": "Bienvenido a Zafra",
+  "tour.overview.1.body":
+    "Zafra presta USDC contra warrants de grano en Solana devnet. Esta guía te muestra cada pantalla en menos de un minuto. Podés volver a abrirla con el botón Guía, arriba a la derecha.",
+  "tour.overview.2.title": "El ciclo completo en 4 pasos",
+  "tour.overview.2.body":
+    "Estas tarjetas son el recorrido de la demo: emitir un warrant, pedir el préstamo, simular una caída de precio y devolver o liquidar. Se tildan solas leyendo tu wallet on-chain.",
+  "tour.overview.3.title": "Números en vivo de devnet",
+  "tour.overview.3.body":
+    "La liquidez del fondo, la deuda vigente y las toneladas tokenizadas se leen directo del programa. Acá no hay nada simulado.",
+  "tour.overview.4.title": "La liquidación, a la vista",
+  "tour.overview.4.body":
+    "Mové el precio: vas a ver en qué punto un préstamo de ejemplo cruza el umbral del 80% y queda liquidable.",
+  "tour.overview.5.title": "Cada transacción es verificable",
+  "tour.overview.5.body":
+    "Las últimas transacciones del programa. Cada link abre Solana Explorer en devnet para que las chequees vos.",
+  "tour.overview.6.title": "Conectá Phantom en devnet",
+  "tour.overview.6.body":
+    "Para operar, usá Phantom en devnet —la red de prueba de Solana, donde los fondos no tienen valor real— con un poco de SOL de prueba del faucet para las comisiones.",
+  "tour.certifier.1.title": "Un rol simulado, a propósito",
+  "tour.certifier.1.body":
+    "En producción los warrants los emite una warrantera habilitada. Acá el contrato solo acepta la wallet certificadora del equipo: con tu propia wallet vas a ver el formulario, pero la firma queda bloqueada.",
+  "tour.certifier.2.title": "Emitir un warrant",
+  "tour.certifier.2.body":
+    "Un Silo ID único, las toneladas guardadas y la wallet del productor. Al firmar se acuña 1 token por tonelada directo en la wallet del productor.",
+  "tour.certifier.3.title": "Qué pasa on-chain",
+  "tour.certifier.3.body":
+    "El programa crea el registro del warrant y su token. Desde ese momento, el grano es una garantía programable.",
+  "tour.borrow.1.title": "Tus warrants como garantía",
+  "tour.borrow.1.body":
+    "Cada warrant de tu wallet, valuado al precio del oráculo, con el préstamo máximo (70%). ¿Todavía no tenés warrants? Esta pantalla te lleva a Certificadora.",
+  "tour.borrow.2.title": "Pedir, seguir y devolver",
+  "tour.borrow.2.body":
+    "Al pedir, el warrant queda en custodia del programa y recibís USDC al instante, menos una comisión de 0,75%. Después ves crecer la deuda en tiempo real, un indicador de salud y el botón para devolver y recuperar el warrant.",
+  "tour.admin.1.title": "Oráculo simulado",
+  "tour.admin.1.body":
+    "En producción el precio del grano viene de un feed real. Acá solo la wallet admin del equipo puede cambiarlo: es lo que mueve la demo de liquidación.",
+  "tour.admin.2.title": "Simular una caída de precio",
+  "tour.admin.2.body":
+    "Con un clic el precio on-chain baja 30%. Los préstamos cuya garantía cae por debajo del 80% de su valor quedan liquidables.",
+  "tour.admin.3.title": "Liquidación sin permisos",
+  "tour.admin.3.body":
+    "Cualquiera puede liquidar un préstamo sin garantía suficiente; no hace falta ser admin. El fondo se queda con el warrant para cubrir la deuda.",
+  "tour.earn.1.title": "El fondo de liquidez",
+  "tour.earn.1.body":
+    "Total, prestado, disponible y rendimiento indicativo, todo leído de devnet. De acá salen los préstamos.",
+  "tour.earn.2.title": "Aportar USDC",
+  "tour.earn.2.body":
+    "Depositás USDC de prueba en el fondo. Los intereses y las comisiones de los préstamos vuelven a él.",
+  "tour.earn.3.title": "Los riesgos, sin vueltas",
+  "tour.earn.3.body":
+    "Prototipo de hackathon: todavía sin retiros, oráculo y certificadora simulados, contrato sin auditar. Ese es el recorrido completo: gracias por revisar Zafra.",
 };

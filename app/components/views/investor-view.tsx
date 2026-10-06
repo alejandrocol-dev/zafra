@@ -48,7 +48,7 @@ export function InvestorView() {
 
       <div className="grid gap-5 lg:grid-cols-5">
         <div className="space-y-5 lg:col-span-3">
-          <Card title={t("earn.pool.title")}>
+          <Card tour="earn-pool" title={t("earn.pool.title")}>
             {loading && !data ? (
               <Skeleton className="h-40" />
             ) : error ? (
@@ -78,7 +78,7 @@ export function InvestorView() {
                 ))}
               </ul>
             </Card>
-            <Card title={t("earn.risk.title")} tone="warn">
+            <Card tour="earn-risk" title={t("earn.risk.title")} tone="warn">
               <div className="flex gap-2.5 text-sm text-mute">
                 <TriangleAlert className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden />
                 <p>{t("earn.risk.body")}</p>
@@ -88,7 +88,7 @@ export function InvestorView() {
         </div>
 
         <div className="lg:col-span-2">
-          <Card title={t("earn.deposit.title")} className="lg:sticky lg:top-24">
+          <Card tour="earn-deposit" title={t("earn.deposit.title")} className="lg:sticky lg:top-24">
             {!owner ? (
               <div className="space-y-4">
                 <Notice tone="info">{t("earn.connect.body")}</Notice>

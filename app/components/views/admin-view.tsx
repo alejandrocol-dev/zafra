@@ -64,12 +64,12 @@ export function AdminView() {
   return (
     <div>
       <PageHeader title={t("admin.title")} />
-      <Notice tone="warn" title={t("admin.banner.title")} className="mb-6">
+      <Notice tour="admin-oracle" tone="warn" title={t("admin.banner.title")} className="mb-6">
         {t("admin.banner.body")}
       </Notice>
 
       <div className="grid gap-5 lg:grid-cols-5">
-        <Card title={t("admin.price.title")} className="lg:col-span-2">
+        <Card tour="admin-price" title={t("admin.price.title")} className="lg:col-span-2">
           {loading && !data ? (
             <Skeleton className="h-48" />
           ) : loadError ? (
@@ -127,6 +127,7 @@ export function AdminView() {
         </Card>
 
         <Card
+          tour="admin-loans"
           title={t("admin.loans.title")}
           subtitle={t("admin.loans.subtitle")}
           className="lg:col-span-3"

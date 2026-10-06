@@ -1,4 +1,4 @@
-"use client";
+  "use client";
 
 import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -66,6 +66,7 @@ export function ProducerView() {
     <div>
       <PageHeader title={t("borrow.title")} subtitle={t("borrow.subtitle")} />
 
+      <div data-tour="borrow-main">
       {!owner ? (
         <EmptyState
           icon={<Wallet className="size-6" aria-hidden />}
@@ -115,6 +116,7 @@ export function ProducerView() {
           ))}
         </div>
       ) : null}
+      </div>
     </div>
   );
 }
