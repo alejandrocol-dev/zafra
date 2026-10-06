@@ -34,12 +34,12 @@ import { ActivityFeed } from "@/components/activity-feed";
 import { BarList, Donut, Legend } from "@/components/charts";
 import { RiskSimulator } from "@/components/risk-simulator";
 import { ZafraMark } from "@/components/logo";
-import { Badge, Card, Notice, ProgressBar, Skeleton, cx } from "@/components/ui";
+import { Badge, Button, Card, Notice, ProgressBar, Skeleton, cx } from "@/components/ui";
 
 export function OverviewView() {
   const t = useT();
   const [, setView] = useView();
-  const { data, error, loading } = useAsyncData(async () => {
+  const { data, error, loading, reload } = useAsyncData(async () => {
     const [stats, config, warrants] = await Promise.all([
       zafra.getPoolStats(),
       zafra.getConfig(),
@@ -53,7 +53,16 @@ export function OverviewView() {
       <DemoHero onGo={setView} />
 
       {error && !data ? (
-        <Notice tone="warn">{t("overview.kpi.error")}</Notice>
+        <Notice
+          tone="warn"
+          action={
+            <Button size="sm" variant="secondary" onClick={reload}>
+              {t("common.retry")}
+            </Button>
+          }
+        >
+          {t("overview.kpi.error")}
+        </Notice>
       ) : (
         <Kpis loading={loading && !data} stats={data?.stats} config={data?.config} warrants={data?.warrants} />
       )}
@@ -68,10 +77,22 @@ export function OverviewView() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card title={t("dash.pool.title")} subtitle={t("dash.pool.subtitle")}>
-          {data ? <PoolDonut stats={data.stats} /> : <Skeleton className="h-56" />}
+          {data ? (
+            <PoolDonut stats={data.stats} />
+          ) : error ? (
+            <ChartError onRetry={reload} />
+          ) : (
+            <Skeleton className="h-56" />
+          )}
         </Card>
         <Card title={t("dash.warrants.title")} subtitle={t("dash.warrants.subtitle")}>
-          {data ? <WarrantBars warrants={data.warrants} /> : <Skeleton className="h-48" />}
+          {data ? (
+            <WarrantBars warrants={data.warrants} />
+          ) : error ? (
+            <ChartError onRetry={reload} />
+          ) : (
+            <Skeleton className="h-48" />
+          )}
         </Card>
         <Card title={t("activity.title")} subtitle={t("activity.subtitle")}>
           <ActivityFeed limit={6} />
@@ -266,6 +287,22 @@ function Kpis({
 }
 
 /* ---------------------------------- Charts ----------------------------------- */
+
+function ChartError({ onRetry }: { onRetry: () => void }) {
+  const t = useT();
+  return (
+    <Notice
+      tone="warn"
+      action={
+        <Button size="sm" variant="secondary" onClick={onRetry}>
+          {t("common.retry")}
+        </Button>
+      }
+    >
+      {t("common.loadError")}
+    </Notice>
+  );
+}
 
 function PoolDonut({ stats }: { stats: PoolStats }) {
   const t = useT();

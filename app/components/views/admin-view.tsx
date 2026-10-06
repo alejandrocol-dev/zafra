@@ -39,10 +39,23 @@ export function AdminView() {
   const [custom, setCustom] = useState("");
   const [liquidating, setLiquidating] = useState<OpenLoan | null>(null);
 
-  const { data, loading } = useAsyncData(async () => {
+  const { data, loading, error, reload } = useAsyncData(async () => {
     const [config, loans] = await Promise.all([zafra.getConfig(), zafra.getOpenLoans()]);
     return { config, loans };
   });
+
+  const loadError = error && !data ? (
+    <Notice
+      tone="warn"
+      action={
+        <Button size="sm" variant="secondary" onClick={reload}>
+          {t("common.retry")}
+        </Button>
+      }
+    >
+      {t("common.loadError")}
+    </Notice>
+  ) : null;
 
   const notAdmin = isRealMode && !!data && !!owner && data.config.admin !== owner;
   const customNum = Number(custom.replace(",", "."));
@@ -59,6 +72,8 @@ export function AdminView() {
         <Card title={t("admin.price.title")} className="lg:col-span-2">
           {loading && !data ? (
             <Skeleton className="h-48" />
+          ) : loadError ? (
+            loadError
           ) : data ? (
             <div className="space-y-5">
               <div>
@@ -118,6 +133,8 @@ export function AdminView() {
         >
           {loading && !data ? (
             <Skeleton className="h-48" />
+          ) : loadError ? (
+            loadError
           ) : data && data.loans.length === 0 ? (
             <p className="rounded-xl border border-dashed border-line-strong px-4 py-8 text-center text-sm text-mute">
               {t("admin.loans.empty")}

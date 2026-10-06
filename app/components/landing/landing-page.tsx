@@ -30,7 +30,6 @@ import { zafra, DEFAULT_PRICE_PER_TON } from "@/lib/zafra";
 import { explorerAddressUrl } from "@/lib/format";
 import { useFmt, useT, type MessageKey } from "@/lib/i18n";
 import { useAsyncData } from "@/lib/use-async";
-import { Banner } from "@/components/banner";
 import { Waterfall } from "@/components/charts";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { ZafraLockup, ZafraMark } from "@/components/logo";
@@ -52,7 +51,6 @@ const EX_LIQ = EX_LOAN / 0.8 / EX_TONS;
 export function LandingPage() {
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
-      <Banner />
       <LandingNav />
       <main className="flex-1">
         <Hero />

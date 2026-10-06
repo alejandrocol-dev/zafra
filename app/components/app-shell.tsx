@@ -16,7 +16,6 @@ import { useT, type MessageKey } from "@/lib/i18n";
 import { useView, type View } from "@/lib/nav";
 import { explorerAddressUrl, shortenAddress } from "@/lib/format";
 import { cx } from "@/components/ui";
-import { Banner } from "./banner";
 import { LocaleSwitch } from "./locale-switch";
 import { ZafraLockup, ZafraMark } from "./logo";
 import { SiteFooter } from "./site-footer";
@@ -145,7 +144,6 @@ export function AppShell({ children }: { children: ReactNode }) {
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <Banner />
         <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md">
           <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-8">
             <div className="flex min-w-0 items-center gap-3">

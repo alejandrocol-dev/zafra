@@ -9,6 +9,7 @@ export const en = {
   "common.connectWallet": "Connect wallet",
   "common.loading": "Loading…",
   "common.retry": "Try again",
+  "common.loadError": "Couldn't read devnet right now. Try again in a moment.",
   "common.close": "Close",
   "common.cancel": "Cancel",
   "common.copy": "Copy",
@@ -34,8 +35,6 @@ export const en = {
   "nav.certifier": "Certifier",
   "nav.admin": "Admin",
   "nav.demoTools": "Demo tools",
-  "banner.text": "Demo on Solana devnet — test funds, no real money.",
-  "banner.detail": "Certifier and price oracle are simulated · not audited",
   "footer.disclaimer":
     "Hackathon prototype on Solana devnet. Not audited. Certifier and price oracle are simulated. Not financial advice.",
   "footer.program": "Program on Solana Explorer",
@@ -515,6 +514,7 @@ export const es: Record<MessageKey, string> = {
   "common.connectWallet": "Conectar wallet",
   "common.loading": "Cargando…",
   "common.retry": "Reintentar",
+  "common.loadError": "No pude leer devnet ahora. Reintentá en un momento.",
   "common.close": "Cerrar",
   "common.cancel": "Cancelar",
   "common.copy": "Copiar",
@@ -540,8 +540,6 @@ export const es: Record<MessageKey, string> = {
   "nav.certifier": "Certificadora",
   "nav.admin": "Administrador",
   "nav.demoTools": "Herramientas de demo",
-  "banner.text": "Demo en Solana devnet — fondos de prueba, sin dinero real.",
-  "banner.detail": "Certificadora y oráculo de precio simulados · sin auditar",
   "footer.disclaimer":
     "Prototipo de hackathon en Solana devnet. Sin auditar. La certificadora y el oráculo de precio son simulados. No es asesoramiento financiero.",
   "footer.program": "Programa en Solana Explorer",

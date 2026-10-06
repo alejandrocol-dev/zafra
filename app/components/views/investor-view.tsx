@@ -29,7 +29,7 @@ export function InvestorView() {
   const [amount, setAmount] = useState("");
   const [open, setOpen] = useState(false);
 
-  const { data, loading } = useAsyncData(async () => {
+  const { data, loading, error, reload } = useAsyncData(async () => {
     const [stats, config, balances] = await Promise.all([
       zafra.getPoolStats(),
       zafra.getConfig(),
@@ -51,6 +51,17 @@ export function InvestorView() {
           <Card title={t("earn.pool.title")}>
             {loading && !data ? (
               <Skeleton className="h-40" />
+            ) : error ? (
+              <Notice
+                tone="warn"
+                action={
+                  <Button size="sm" variant="secondary" onClick={reload}>
+                    {t("common.retry")}
+                  </Button>
+                }
+              >
+                {t("common.loadError")}
+              </Notice>
             ) : data ? (
               <PoolOverview stats={data.stats} config={data.config} />
             ) : null}

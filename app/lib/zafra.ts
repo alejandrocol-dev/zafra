@@ -717,9 +717,16 @@ class ZafraRouter implements ZafraClient {
     const scoped = `${runtime?.wallet.publicKey.toBase58() ?? "anon"}:${key}`;
     const hit = this.readCache.get(scoped);
     if (hit && Date.now() - hit.at < ttlMs) return hit.promise as Promise<T>;
-    const promise = withRateLimitRetry(() => this.target().then(fn));
+    const promise = withTimeout(
+      withRateLimitRetry(() => this.target().then(fn)),
+      READ_TIMEOUT_MS,
+    );
     this.readCache.set(scoped, { at: Date.now(), promise });
-    promise.catch(() => this.readCache.delete(scoped));
+    promise.catch(() => {
+      if (this.readCache.get(scoped)?.promise === promise) {
+        this.readCache.delete(scoped);
+      }
+    });
     return promise;
   }
 
@@ -772,6 +779,29 @@ class ZafraRouter implements ZafraClient {
   }
   liquidate(warrantAddress: string) {
     return this.write((c) => c.liquidate(warrantAddress));
+  }
+}
+
+/**
+ * A public-RPC request that never answers must surface as an error — otherwise
+ * the UI sits on skeletons forever. Covers the whole retry sequence.
+ */
+const READ_TIMEOUT_MS = 20_000;
+
+async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(
+          () => reject(new Error("Devnet RPC timed out")),
+          ms,
+        );
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
   }
 }
 

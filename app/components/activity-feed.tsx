@@ -14,7 +14,7 @@ import {
 import { zafra, type ActivityKind } from "@/lib/zafra";
 import { useFmt, useT, type MessageKey } from "@/lib/i18n";
 import { useAsyncData } from "@/lib/use-async";
-import { ExplorerLink, Notice, Skeleton, cx } from "@/components/ui";
+import { Button, ExplorerLink, Notice, Skeleton, cx } from "@/components/ui";
 
 const KIND: Record<ActivityKind, { icon: LucideIcon; label: MessageKey; tile: string }> = {
   initialize: { icon: Settings2, label: "activity.initialize", tile: "bg-tile-lilac text-navy" },
@@ -31,9 +31,21 @@ const KIND: Record<ActivityKind, { icon: LucideIcon; label: MessageKey; tile: st
 export function ActivityFeed({ limit = 8 }: { limit?: number }) {
   const t = useT();
   const f = useFmt();
-  const { data, error, loading } = useAsyncData(() => zafra.getRecentActivity(limit), limit);
+  const { data, error, loading, reload } = useAsyncData(() => zafra.getRecentActivity(limit), limit);
 
-  if (error && !data) return <Notice tone="warn">{t("activity.error")}</Notice>;
+  if (error && !data)
+    return (
+      <Notice
+        tone="warn"
+        action={
+          <Button size="sm" variant="secondary" onClick={reload}>
+            {t("common.retry")}
+          </Button>
+        }
+      >
+        {t("activity.error")}
+      </Notice>
+    );
   if (loading && !data)
     return (
       <div className="space-y-3">
