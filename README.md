@@ -1,8 +1,9 @@
 <p align="center">
-  <img src="app/app/icon.svg" width="88" alt="Zafra" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="app/public/brand/zafra-lockup-white.png" />
+    <img src="app/public/brand/zafra-lockup.png" width="300" alt="Zafra" />
+  </picture>
 </p>
-
-<h1 align="center">Zafra</h1>
 
 <p align="center"><b>Liquidez abierta para warrants de granos en Argentina.</b><br/>
 El productor deja su warrant de garantía y recibe un préstamo en dólares digitales en segundos, sin vender la cosecha.</p>
@@ -12,6 +13,21 @@ El productor deja su warrant de garantía y recibe un préstamo en dólares digi
 </p>
 
 > **Estado:** corre solo en **devnet** (la red de prueba de Solana, con plata que no vale nada). La certificadora y el oráculo de precio están simulados. El código no está auditado.
+
+<p align="center">
+  <img src="docs/img/landing.jpg" alt="Landing de Zafra" />
+</p>
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/img/dashboard.jpg" alt="Panel de la app con datos en vivo de devnet" /></td>
+    <td width="50%"><img src="docs/img/guide.jpg" alt="Guía interactiva para recorrer la app" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Panel con datos en vivo de devnet, simulador de liquidación y actividad on-chain</sub></td>
+    <td align="center"><sub>Guía interactiva que explica cada pantalla</sub></td>
+  </tr>
+</table>
 
 ---
 
@@ -89,6 +105,10 @@ El ciclo completo corre en la cadena y es verificable en el explorador:
 **Ejemplo:** 100 t de soja a 380 USDC/t equivalen a 38.000 USDC de garantía. Con eso se pueden pedir 26.600 USDC y se reciben unos 26.400 netos. Si la soja cae un 30%, la posición se vuelve liquidable.
 
 ### La app
+- **Landing** que explica el producto en lenguaje simple, con números leídos en vivo de la cadena.
+- **Panel** con la liquidez del fondo, la deuda vigente, las toneladas tokenizadas, gráficos y las últimas transacciones del programa, cada una con link al explorador.
+- **Simulador de liquidación:** movés el precio del grano y ves en qué punto un préstamo queda liquidable.
+- **Guía interactiva** por pantalla, pensada para quien revisa la app por primera vez.
 - **Bilingüe**, en español e inglés.
 - **Pantalla de revisión antes de cada firma**, que muestra qué das, qué recibís, la comisión y el precio de liquidación.
 - **Riesgo explicado en lenguaje claro**, con cuatro niveles: Sano, Atención, En riesgo y Liquidable. También muestra cuánto puede caer el precio antes de la liquidación.
@@ -124,9 +144,7 @@ La conclusión que tuve es que hay una oportunidad real. El activo existe, el ma
 
 ## Una nota honesta sobre el estado
 
-Zafra llegó a esta entrega más ajustado de lo que me hubiera gustado. Entre el tiempo de la hackathon y una conexión de internet inestable en mi casa, no todo el pulido llegó a hacerse. La app funciona y hace lo que promete, pero el diseño todavía tiene margen: quiero transiciones más cuidadas, una mejor jerarquía visual, diseño original y atractivo,estados más ricos en cada pantalla y un monton de detalles que aún no pude agregar.
-
-El logo del choclo tampoco es el definitivo: se hizo con lo que el tiempo permitió y está en la lista de cosas a iterar.
+Zafra llegó a esta entrega más ajustado de lo que me hubiera gustado, entre el tiempo de la hackathon y una conexión de internet inestable en mi casa. En la recta final sumé una identidad visual propia, una landing, el panel con gráficos y una guía para recorrer la app, pero todavía hay margen: estados más ricos en cada pantalla, versión móvil más cuidada y muchos detalles más.
 
 Elegí deliberadamente presentar el sistema completo funcionando de verdad: emitir, prestar, devolver y liquidar, todo en devnet, antes que una interfaz perfecta sobre datos falsos. Lo próximo es cerrar esa brecha, si se me permite.
 
@@ -152,6 +170,7 @@ app/              Frontend Next.js
 scripts/          Scripts de devnet (TS)
 docs/SPEC.md      Contrato técnico (manda sobre el código)
 docs/DESIGN.md    Brief de diseño de la interfaz
+docs/img/         Capturas de la app
 ```
 
 ### Correrlo
