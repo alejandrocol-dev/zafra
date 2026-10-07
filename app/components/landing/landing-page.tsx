@@ -35,7 +35,7 @@ import { Waterfall } from "@/components/charts";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { ZafraLockup, ZafraMark } from "@/components/logo";
 import { RiskSimulator } from "@/components/risk-simulator";
-import { Skeleton, cx } from "@/components/ui";
+import { Button, Skeleton, cx } from "@/components/ui";
 
 const GITHUB_URL = "https://github.com/alejandrocol-dev/zafra";
 
@@ -299,7 +299,7 @@ function CardRow({ label, value, muted }: { label: string; value: string; muted?
 function LiveStrip() {
   const t = useT();
   const f = useFmt();
-  const { data, error } = useAsyncData(async () => {
+  const { data, error, reload } = useAsyncData(async () => {
     const [stats, config, warrants] = await Promise.all([
       zafra.getPoolStats(),
       zafra.getConfig(),
@@ -335,7 +335,12 @@ function LiveStrip() {
           </a>
         </div>
         {error && !data ? (
-          <p className="text-sm text-mute">{t("overview.kpi.error")}</p>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-mute">{t("overview.kpi.error")}</p>
+            <Button size="sm" variant="secondary" onClick={reload}>
+              {t("common.retry")}
+            </Button>
+          </div>
         ) : (
           <dl className="grid grid-cols-2 gap-y-6 lg:grid-cols-4 lg:divide-x lg:divide-line">
             {items.map((it) => (

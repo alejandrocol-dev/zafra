@@ -12,7 +12,7 @@ export default function AppHome() {
   useScrollTopOnChange(view);
 
   return (
-    <div key={view} aria-live="polite" className="av-view">
+    <div key={view} className="av-view">
       {view === "overview" && <OverviewView />}
       {view === "borrow" && <ProducerView />}
       {view === "earn" && <InvestorView />}

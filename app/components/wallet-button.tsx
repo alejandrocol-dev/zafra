@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { ChevronDown, LogOut, Wallet } from "lucide-react";
+import { zafra } from "@/lib/zafra";
 import { shortenAddress } from "@/lib/format";
-import { useT } from "@/lib/i18n";
+import { useFmt, useT } from "@/lib/i18n";
+import { useAsyncData } from "@/lib/use-async";
 import { Button, CopyButton } from "@/components/ui";
 
 /**
@@ -14,10 +16,20 @@ import { Button, CopyButton } from "@/components/ui";
  */
 export function WalletButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   const t = useT();
+  const f = useFmt();
   const { connected, connecting, publicKey, disconnect } = useWallet();
   const { setVisible } = useWalletModal();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  // Balances load only while the menu is open (and refresh after each tx).
+  const { data: balances } = useAsyncData(
+    () =>
+      open && publicKey
+        ? zafra.getWalletBalances(publicKey.toBase58())
+        : Promise.resolve(null),
+    `${publicKey?.toBase58() ?? "none"}:${open}`,
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -48,6 +60,18 @@ export function WalletButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
       {open && (
         <div className="absolute right-0 z-40 mt-2 w-56 rounded-xl border border-line-strong bg-elevated p-2 shadow-xl">
           <p className="px-2 pb-2 pt-1 text-xs text-faint">{t("wallet.connected")}</p>
+          {balances && (
+            <div className="mx-2 mb-2 rounded-lg bg-sunken px-2.5 py-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-faint">SOL</span>
+                <span className="font-mono font-medium text-ink">{f.number(balances.sol, 4)}</span>
+              </div>
+              <div className="mt-1 flex items-center justify-between">
+                <span className="text-faint">USDC</span>
+                <span className="font-mono font-medium text-ink">{f.usdcExact(balances.usdc)}</span>
+              </div>
+            </div>
+          )}
           <div className="px-2 pb-2">
             <CopyButton value={address} label={t("wallet.copyAddress")} />
           </div>

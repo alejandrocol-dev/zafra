@@ -21,9 +21,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://zafra-gilt.vercel.app"),
   title: "Zafra — Cash against the grain you already stored",
   description:
     "Open on-chain liquidity for grain warrants: lock a warrant as collateral and borrow USDC on Solana. Devnet demo.",
+  openGraph: {
+    title: "Zafra — Cash against the grain you already stored",
+    description:
+      "Open on-chain liquidity for grain warrants: lock a warrant as collateral and borrow USDC on Solana. Devnet demo.",
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Zafra — grain-backed credit on Solana" }],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

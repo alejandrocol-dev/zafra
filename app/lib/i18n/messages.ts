@@ -45,6 +45,14 @@ export const en = {
   "footer.program": "Program on Solana Explorer",
   "footer.builtFor": "Built for the Colosseum Crypto World's Fair · Superteam Argentina",
 
+  // ---- error pages
+  "fatal.title": "Something went wrong",
+  "fatal.body": "The app hit an unexpected error. Reloading usually fixes it.",
+  "fatal.retry": "Reload",
+  "nf.title": "Page not found",
+  "nf.body": "This page doesn't exist. The app lives at /app.",
+  "nf.cta": "Back home",
+
   // ---- overview
   "overview.eyebrow": "Grain-backed credit on Solana",
   "overview.title": "Cash today against the grain you already stored.",
@@ -620,6 +628,14 @@ export const es: Record<MessageKey, string> = {
     "Prototipo de hackathon en Solana devnet. Sin auditar. La certificadora y el oráculo de precio son simulados. No es asesoramiento financiero.",
   "footer.program": "Programa en Solana Explorer",
   "footer.builtFor": "Hecho para el Colosseum Crypto World's Fair · Superteam Argentina",
+
+  // ---- error pages
+  "fatal.title": "Algo salió mal",
+  "fatal.body": "La app tuvo un error inesperado. Recargar suele arreglarlo.",
+  "fatal.retry": "Recargar",
+  "nf.title": "Página no encontrada",
+  "nf.body": "Esa página no existe. La app está en /app.",
+  "nf.cta": "Volver al inicio",
 
   // ---- overview
   "overview.eyebrow": "Crédito respaldado por granos en Solana",
