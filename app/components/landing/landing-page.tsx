@@ -26,7 +26,7 @@ import {
   Zap,
   type LucideIcon,
 } from "lucide-react";
-import { zafra, DEFAULT_PRICE_PER_TON } from "@/lib/zafra";
+import { zafra, DEFAULT_PRICE_PER_TON, type Config } from "@/lib/zafra";
 import { explorerAddressUrl } from "@/lib/format";
 import { useFmt, useT, type MessageKey } from "@/lib/i18n";
 import { useAsyncData } from "@/lib/use-async";
@@ -39,27 +39,57 @@ import { Skeleton, cx } from "@/components/ui";
 const PROGRAM_ID = process.env.NEXT_PUBLIC_PROGRAM_ID ?? "AERC53ZiqizgjYdJK9hCeGtSk6PfzwnEn2z3wkMKiqiJ";
 const GITHUB_URL = "https://github.com/alejandrocol-dev/zafra";
 
-/* Canonical demo example: 100 t of soy at the 380 USDC/t reference price. */
+/* Canonical demo example: 100 t of soy. USD figures come from the on-chain
+   Config when it loads (fallback: the 380 USDC/t reference parameters). */
 const EX_TONS = 100;
-const EX_VALUE = EX_TONS * DEFAULT_PRICE_PER_TON;
-const EX_LOAN = EX_VALUE * 0.7;
-const EX_FEE = EX_LOAN * 0.0075;
-/* Shown rounded down (≈26,400), matching the pitch numbers. */
-const EX_NET = Math.floor(EX_LOAN - EX_FEE);
-const EX_LIQ = EX_LOAN / 0.8 / EX_TONS;
+
+interface ExampleLoan {
+  price: number;
+  ltvBps: number;
+  liqBps: number;
+  feeBps: number;
+  value: number;
+  loan: number;
+  fee: number;
+  net: number;
+  liqPrice: number;
+}
+
+function exampleLoan(config: Config | null | undefined): ExampleLoan {
+  const price = config?.pricePerTon ?? DEFAULT_PRICE_PER_TON;
+  const ltvBps = config?.ltvBps ?? 7000;
+  const liqBps = config?.liqThresholdBps ?? 8000;
+  const feeBps = config?.feeBps ?? 75;
+  const value = EX_TONS * price;
+  const loan = (value * ltvBps) / 10_000;
+  const fee = (loan * feeBps) / 10_000;
+  return {
+    price,
+    ltvBps,
+    liqBps,
+    feeBps,
+    value,
+    loan,
+    fee,
+    net: Math.floor(loan - fee),
+    liqPrice: loan / (liqBps / 10_000) / EX_TONS,
+  };
+}
 
 export function LandingPage() {
+  const { data: config } = useAsyncData(() => zafra.getConfig());
+  const ex = exampleLoan(config);
   return (
     <div className="flex min-h-dvh flex-col bg-surface">
       <LandingNav />
       <main className="flex-1">
-        <Hero />
+        <Hero ex={ex} />
         <LiveStrip />
         <Problem />
         <How />
-        <Numbers />
-        <PriceRisk />
-        <Sides />
+        <Numbers ex={ex} config={config} />
+        <PriceRisk config={config} />
+        <Sides ex={ex} />
         <WhyOnChain />
         <Positioning />
         <Transparency />
@@ -132,7 +162,7 @@ function LandingNav() {
 
 /* ------------------------------------ Hero ----------------------------------- */
 
-function Hero() {
+function Hero({ ex }: { ex: ExampleLoan }) {
   const t = useT();
   return (
     <section className="relative isolate overflow-hidden bg-navy-deep text-white">
@@ -186,14 +216,14 @@ function Hero() {
         </div>
 
         <div className="av-rise relative mx-auto w-full max-w-md [animation-delay:150ms] lg:mr-0">
-          <LoanCard />
+          <LoanCard ex={ex} />
         </div>
       </div>
     </section>
   );
 }
 
-function LoanCard() {
+function LoanCard({ ex }: { ex: ExampleLoan }) {
   const t = useT();
   const f = useFmt();
   return (
@@ -219,14 +249,14 @@ function LoanCard() {
           </div>
         </div>
         <dl className="mt-5 space-y-3 text-sm">
-          <CardRow label={t("landing.card.collateral")} value={f.usdcRound(EX_VALUE)} />
-          <CardRow label={t("landing.card.loan")} value={f.usdcRound(EX_LOAN)} />
-          <CardRow label={t("landing.card.fee")} value={`− ${f.usdc(EX_FEE)}`} muted />
+          <CardRow label={t("landing.card.collateral")} value={f.usdcRound(ex.value)} />
+          <CardRow label={t("landing.card.loan")} value={f.usdcRound(ex.loan)} />
+          <CardRow label={t("landing.card.fee")} value={`− ${f.usdc(ex.fee)}`} muted />
         </dl>
         <div className="mt-5 rounded-2xl bg-navy p-4 text-white">
           <p className="text-xs font-medium text-white/60">{t("landing.card.net")}</p>
           <p className="mt-1 font-display text-3xl font-extrabold tracking-tight">
-            ≈ {f.number(EX_NET, 0)} <span className="text-base font-semibold text-brand">USDC</span>
+            ≈ {f.number(ex.net, 0)} <span className="text-base font-semibold text-brand">USDC</span>
           </p>
           <p className="mt-1 flex items-center gap-1.5 text-xs text-white/60">
             <Zap className="size-3.5 text-brand" aria-hidden />
@@ -247,7 +277,7 @@ function LoanCard() {
             <span className="flex-1 rounded-full bg-danger/25" />
           </div>
           <p className="mt-2 text-xs text-faint">
-            {t("landing.card.liq", { price: f.number(EX_LIQ, 2, 2) })}
+            {t("landing.card.liq", { price: f.number(ex.liqPrice, 2, 2) })}
           </p>
         </div>
       </div>
@@ -278,7 +308,7 @@ function LiveStrip() {
     return { stats, config, tons: warrants.reduce((s, w) => s + w.tons, 0), count: warrants.length };
   });
   const items: Array<{ label: string; value?: string }> = [
-    { label: t("overview.kpi.liquidity"), value: data ? f.usdcRound(data.stats.totalLiquidity) : undefined },
+    { label: t("overview.kpi.liquidity"), value: data ? f.usdcRound(data.stats.available) : undefined },
     { label: t("overview.kpi.tons"), value: data ? f.tons(data.tons) : undefined },
     { label: t("landing.live.warrants"), value: data ? f.number(data.count, 0) : undefined },
     { label: t("overview.kpi.ltv"), value: data ? f.bps(data.config.ltvBps) : undefined },
@@ -431,14 +461,14 @@ function How() {
   );
 }
 
-function Numbers() {
+function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | undefined }) {
   const t = useT();
   const f = useFmt();
   const facts: Array<{ icon: LucideIcon; label: MessageKey; value: string }> = [
-    { icon: Gauge, label: "landing.numbers.f.ltv", value: "70%" },
-    { icon: ShieldCheck, label: "landing.numbers.f.liq", value: "80%" },
-    { icon: BadgeCheck, label: "landing.numbers.f.fee", value: f.bps(75) },
-    { icon: Landmark, label: "landing.numbers.f.apr", value: "12%" },
+    { icon: Gauge, label: "landing.numbers.f.ltv", value: f.bps(ex.ltvBps) },
+    { icon: ShieldCheck, label: "landing.numbers.f.liq", value: f.bps(ex.liqBps) },
+    { icon: BadgeCheck, label: "landing.numbers.f.fee", value: f.bps(ex.feeBps) },
+    { icon: Landmark, label: "landing.numbers.f.apr", value: f.bps(config?.annualInterestBps ?? 1200) },
   ];
   return (
     <section id="numbers" className="scroll-mt-20 px-5 py-24 sm:px-8 lg:py-32">
@@ -462,17 +492,17 @@ function Numbers() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="font-display text-lg font-extrabold text-ink">{t("landing.numbers.chart")}</p>
             <span className="rounded-full bg-sunken px-3 py-1 text-xs font-semibold text-mute">
-              {f.tons(EX_TONS)} · {t("status.grain.soybean")} · {DEFAULT_PRICE_PER_TON} USDC/t
+              {f.tons(EX_TONS)} · {t("status.grain.soybean")} · {f.number(ex.price, 0)} USDC/t
             </span>
           </div>
           <Waterfall
             className="mt-2"
             height={240}
             steps={[
-              { label: t("landing.numbers.w.value"), value: EX_VALUE, display: f.number(EX_VALUE, 0), kind: "total" },
-              { label: t("landing.numbers.w.haircut"), value: -(EX_VALUE - EX_LOAN), display: `−${f.number(EX_VALUE - EX_LOAN, 0)}`, kind: "delta" },
-              { label: t("landing.numbers.w.fee"), value: -EX_FEE, display: `−${f.number(EX_FEE, 0)}`, kind: "delta" },
-              { label: t("landing.numbers.w.net"), value: EX_NET, display: `≈${f.number(EX_NET, 0)}`, kind: "result" },
+              { label: t("landing.numbers.w.value"), value: ex.value, display: f.number(ex.value, 0), kind: "total" },
+              { label: t("landing.numbers.w.haircut"), value: -(ex.value - ex.loan), display: `−${f.number(ex.value - ex.loan, 0)}`, kind: "delta" },
+              { label: t("landing.numbers.w.fee"), value: -ex.fee, display: `−${f.number(ex.fee, 0)}`, kind: "delta" },
+              { label: t("landing.numbers.w.net"), value: ex.net, display: `≈${f.number(ex.net, 0)}`, kind: "result" },
             ]}
           />
           <p className="mt-6 text-xs leading-relaxed text-faint">{t("landing.numbers.note")}</p>
@@ -482,22 +512,21 @@ function Numbers() {
   );
 }
 
-function PriceRisk() {
+function PriceRisk({ config }: { config: Config | null | undefined }) {
   const t = useT();
-  const { data } = useAsyncData(() => zafra.getConfig());
   return (
     <section className="bg-bg px-5 py-24 sm:px-8 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         <SectionHead center eyebrow={t("landing.risk.eyebrow")} title={t("landing.risk.title")} body={t("landing.risk.body")} />
         <div className="mt-14 rounded-[28px] border border-line bg-surface p-5 shadow-(--shadow-float) sm:p-8">
-          <RiskSimulator config={data} oraclePrice={data?.pricePerTon} />
+          <RiskSimulator config={config} oraclePrice={config?.pricePerTon} />
         </div>
       </div>
     </section>
   );
 }
 
-function Sides() {
+function Sides({ ex }: { ex: ExampleLoan }) {
   const t = useT();
   const f = useFmt();
   return (
@@ -515,7 +544,7 @@ function Sides() {
             href="/app#borrow"
             stat={
               <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-                <p className="font-display text-3xl font-extrabold text-brand">≈ {f.number(EX_NET, 0)} USDC</p>
+                <p className="font-display text-3xl font-extrabold text-brand">≈ {f.number(ex.net, 0)} USDC</p>
                 <p className="mt-1 text-sm text-white/70">{t("landing.sides.prod.stat")}</p>
               </div>
             }
@@ -529,7 +558,7 @@ function Sides() {
             href="/app#earn"
             stat={
               <div className="mt-8 rounded-2xl bg-white/70 p-4">
-                <p className="font-display text-3xl font-extrabold text-navy">74,3%</p>
+                <p className="font-display text-3xl font-extrabold text-navy">{f.number(74.3, 1, 1)}%</p>
                 <p className="mt-1 text-sm text-navy/70">{t("landing.sides.inv.stat")}</p>
                 <p className="mt-1 text-[11px] text-navy/50">{t("landing.sides.inv.source")}</p>
               </div>

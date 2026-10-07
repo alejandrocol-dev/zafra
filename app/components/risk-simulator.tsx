@@ -23,9 +23,10 @@ const TIER_COLOR = {
 } as const;
 
 /**
- * "What if the grain price moves?" for the canonical demo loan (100 t of soy
- * taken at the 380 reference price). Pure math with the contract's own
- * parameters: collateral value vs. the liquidation threshold (debt ÷ liq %).
+ * "What if the grain price moves?" for a loan of 100 t of soy opened at the
+ * current oracle price (or the 380 reference before config loads). Pure math
+ * with the contract's own parameters: collateral value vs. the liquidation
+ * threshold (debt ÷ liq %).
  */
 export function RiskSimulator({
   config,
@@ -39,7 +40,7 @@ export function RiskSimulator({
   const gid = useId();
   const ltv = config?.ltvBps ?? 7000;
   const liq = config?.liqThresholdBps ?? 8000;
-  const base = DEFAULT_PRICE_PER_TON;
+  const base = oraclePrice ?? DEFAULT_PRICE_PER_TON;
   const clamp = (p: number) => Math.min(MAX, Math.max(MIN, Math.round(p)));
   const [picked, setPicked] = useState<number | null>(null);
   const price = picked ?? clamp(oraclePrice ?? base);
@@ -97,7 +98,7 @@ export function RiskSimulator({
             <circle cx={x(price)} cy={y(value)} r="5" fill="#fff" stroke={TIER_COLOR[tier]} strokeWidth="2.5" />
             <line x1={0} x2={W} y1={H} y2={H} stroke="var(--color-line-strong)" />
             {ticks.map((p) => (
-              <text key={p} x={x(p)} y={H + 18} textAnchor="middle" className={cx("text-[11px]", p === base ? "fill-ink font-semibold" : "fill-faint")}>
+              <text key={p} x={x(p)} y={H + 18} textAnchor="middle" className={cx("text-[11px]", p === Math.round(base) ? "fill-ink font-semibold" : "fill-faint")}>
                 {p}
               </text>
             ))}

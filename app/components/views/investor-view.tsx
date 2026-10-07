@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { CircleCheck, TriangleAlert } from "lucide-react";
 import { zafra, type Config, type PoolStats } from "@/lib/zafra";
+import { MIN_SOL_FOR_FEES } from "@/lib/constants";
 import { useFmt, useT } from "@/lib/i18n";
 import { useAsyncData } from "@/lib/use-async";
 import { TxDialog } from "@/components/tx-dialog";
@@ -147,7 +148,10 @@ export function InvestorView() {
           ]}
           warnings={[{ tone: "warn", text: t("earn.risk.body") }]}
           ack={t("earn.ack")}
-          blockers={amountNum > balance ? [t("earn.block.balance", { have: f.usdc(balance) })] : []}
+          blockers={[
+            ...(amountNum > balance ? [t("earn.block.balance", { have: f.usdc(balance) })] : []),
+            ...(data.balances && data.balances.sol < MIN_SOL_FOR_FEES ? [t("borrow.block.sol")] : []),
+          ]}
           confirmLabel={t("earn.confirm", { amount: f.usdc(amountNum) })}
           successText={t("earn.success", { amount: f.usdc(amountNum, false) })}
           action={() => zafra.depositLiquidity(amountNum)}

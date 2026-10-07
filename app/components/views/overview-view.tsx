@@ -72,7 +72,7 @@ export function OverviewView() {
       <Card
         tour="simulator"
         title={t("sim.title")}
-        subtitle={t("sim.subtitle", { price: DEFAULT_PRICE_PER_TON })}
+        subtitle={t("sim.subtitle", { price: data?.config.pricePerTon ?? DEFAULT_PRICE_PER_TON })}
         actions={<Badge tone="warn">{t("sim.oracleBadge")}</Badge>}
       >
         <RiskSimulator config={data?.config} oraclePrice={data?.config.pricePerTon} />

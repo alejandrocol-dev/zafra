@@ -58,6 +58,7 @@ export function AdminView() {
   ) : null;
 
   const notAdmin = isRealMode && !!data && !!owner && data.config.admin !== owner;
+  const noWallet = isRealMode && !owner;
   const customNum = Number(custom.replace(",", "."));
   const customValid = Number.isFinite(customNum) && customNum > 0;
 
@@ -192,7 +193,13 @@ export function AdminView() {
               ? [{ tone: "warn", text: t("admin.price.warn.drop") }]
               : []
           }
-          blockers={notAdmin ? [t("admin.block.notAdmin")] : []}
+          blockers={
+            noWallet
+              ? [t("admin.block.noWallet")]
+              : notAdmin
+                ? [t("admin.block.notAdmin")]
+                : []
+          }
           confirmLabel={t("admin.price.confirm", { price: f.usdc(newPrice) })}
           successText={t("admin.price.success", { price: f.usdc(newPrice) })}
           action={() => zafra.setPrice(newPrice)}
@@ -204,6 +211,7 @@ export function AdminView() {
         <LiquidateDialog
           openLoan={liquidating}
           config={data.config}
+          blockers={noWallet ? [t("admin.block.noWallet")] : []}
           onClose={() => setLiquidating(null)}
         />
       )}
@@ -274,10 +282,12 @@ function LoanRow({
 function LiquidateDialog({
   openLoan,
   config,
+  blockers,
   onClose,
 }: {
   openLoan: OpenLoan;
   config: Config;
+  blockers?: string[];
   onClose: () => void;
 }) {
   const t = useT();
@@ -301,6 +311,7 @@ function LiquidateDialog({
         },
       ]}
       warnings={[{ tone: "warn", text: t("admin.liq.warn") }]}
+      blockers={blockers}
       confirmLabel={t("admin.liq.confirm", { silo: warrant.siloId })}
       successText={t("admin.liq.success", { silo: warrant.siloId })}
       action={() => zafra.liquidate(warrant.address)}

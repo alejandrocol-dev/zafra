@@ -81,7 +81,10 @@ export function CertifierView() {
 
   const tonsNum = Math.floor(Number(tons));
   const producerOk = isValidAddress(producer);
-  const formOk = siloId.trim().length > 0 && tonsNum > 0 && producerOk && silo !== "taken";
+  // The silo id is a PDA seed on-chain: seeds are capped at 32 bytes.
+  const siloTooLong = new TextEncoder().encode(siloId.trim()).length > 32;
+  const formOk =
+    siloId.trim().length > 0 && tonsNum > 0 && producerOk && silo !== "taken" && !siloTooLong;
   const notCertifier = isRealMode && !!data && !!owner && data.config.certifier !== owner;
 
   return (
@@ -104,9 +107,13 @@ export function CertifierView() {
               label={t("cert.silo")}
               hint={t("cert.silo.help")}
               error={
-                silo === "taken"
-                  ? t("cert.silo.taken", { suggestion })
-                  : undefined
+                siloTooLong
+                  ? t("cert.silo.tooLong")
+                  : silo === "taken"
+                    ? suggestion
+                      ? t("cert.silo.taken", { suggestion })
+                      : t("cert.silo.takenPlain")
+                    : undefined
               }
               right={
                 silo === "checking" ? (
