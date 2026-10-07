@@ -16,7 +16,12 @@ import {
   FileCheck2,
   Gauge,
   Banknote,
+  ChevronDown,
+  Gavel,
+  Hourglass,
   Landmark,
+  Rocket,
+  Timer,
   Lock,
   Scale,
   ShieldCheck,
@@ -85,14 +90,21 @@ export function LandingPage() {
       <main className="flex-1">
         <Hero ex={ex} />
         <LiveStrip />
-        <Problem />
+        <Sides ex={ex} />
+        <Problem ex={ex} />
+        <Market />
         <How />
+        <AppPreview />
         <Numbers ex={ex} config={config} />
         <PriceRisk config={config} />
-        <Sides ex={ex} />
-        <WhyOnChain />
+        <Speed />
+        <Legal />
         <Positioning />
+        <WhyOnChain />
         <Transparency />
+        <Faq />
+        <Roadmap />
+        <BuiltOn />
         <FinalCta />
       </main>
       <LandingFooter />
@@ -114,8 +126,9 @@ function LandingNav() {
   const links: Array<[string, MessageKey]> = [
     ["#how", "landing.nav.how"],
     ["#numbers", "landing.nav.numbers"],
-    ["#why", "landing.nav.why"],
+    ["#legal", "landing.nav.legal"],
     ["#transparency", "landing.nav.trust"],
+    ["#faq", "landing.nav.faq"],
   ];
   return (
     <header
@@ -128,7 +141,7 @@ function LandingNav() {
         <Link href="/" aria-label="Zafra">
           <ZafraLockup white={!scrolled} />
         </Link>
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Landing">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Landing">
           {links.map(([href, key]) => (
             <a
               key={href}
@@ -164,6 +177,13 @@ function LandingNav() {
 
 function Hero({ ex }: { ex: ExampleLoan }) {
   const t = useT();
+  const f = useFmt();
+  const chips = [
+    t("landing.hero.chip.ltv", { ltv: f.bps(ex.ltvBps) }),
+    t("landing.hero.chip.speed"),
+    t("landing.hero.chip.fee", { fee: f.bps(ex.feeBps) }),
+    t("landing.hero.chip.rules"),
+  ];
   return (
     <section className="relative isolate overflow-hidden bg-navy-deep text-white">
       <Image
@@ -183,13 +203,21 @@ function Hero({ ex }: { ex: ExampleLoan }) {
             <Sprout className="size-3.5 text-brand" aria-hidden />
             {t("landing.hero.eyebrow")}
           </span>
-          <h1 className="mt-6 text-[42px] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-6xl lg:text-[68px]">
+          <h1 className="mt-6 text-[40px] font-extrabold leading-[1.04] tracking-[-0.03em] sm:text-6xl lg:text-[64px]">
             {t("landing.hero.title1")}
             <br />
-            <span className="text-white/55">{t("landing.hero.title2")}</span>
+            <span className="text-brand">{t("landing.hero.title2")}</span>
           </h1>
-          <p className="mt-4 font-display text-2xl font-bold text-brand sm:text-3xl">{t("landing.hero.title3")}</p>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">{t("landing.hero.subtitle")}</p>
+          <p className="mt-5 font-display text-xl font-bold text-white/85 sm:text-2xl">{t("landing.hero.title3")}</p>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">{t("landing.hero.subtitle")}</p>
+          <ul className="mt-6 flex flex-wrap gap-2">
+            {chips.map((c) => (
+              <li key={c} className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.07] px-3 py-1.5 text-xs font-semibold text-white/85 backdrop-blur">
+                <CircleCheck className="size-3.5 text-brand" aria-hidden />
+                {c}
+              </li>
+            ))}
+          </ul>
           <div className="mt-9 flex flex-wrap gap-3">
             <Link
               href="/app"
@@ -205,14 +233,6 @@ function Hero({ ex }: { ex: ExampleLoan }) {
               {t("landing.hero.ctaHow")}
             </a>
           </div>
-          <ul className="mt-9 flex flex-wrap gap-x-6 gap-y-2 text-sm text-white/65">
-            {(["landing.hero.trust1", "landing.hero.trust2", "landing.hero.trust3"] as const).map((k) => (
-              <li key={k} className="flex items-center gap-2">
-                <CircleCheck className="size-4 text-brand" aria-hidden />
-                {t(k)}
-              </li>
-            ))}
-          </ul>
         </div>
 
         <div className="av-rise relative mx-auto w-full max-w-md [animation-delay:150ms] lg:mr-0">
@@ -383,15 +403,16 @@ function SectionHead({
   );
 }
 
-function Problem() {
+function Problem({ ex }: { ex: ExampleLoan }) {
   const t = useT();
+  const f = useFmt();
   const points: Array<{ icon: LucideIcon; title: MessageKey; body: MessageKey }> = [
     { icon: Clock3, title: "landing.problem.p1.title", body: "landing.problem.p1.body" },
     { icon: Wheat, title: "landing.problem.p2.title", body: "landing.problem.p2.body" },
     { icon: Scale, title: "landing.problem.p3.title", body: "landing.problem.p3.body" },
   ];
   return (
-    <section className="px-5 py-24 sm:px-8 lg:py-32">
+    <section className="bg-bg px-5 py-24 sm:px-8 lg:py-32">
       <div className="mx-auto grid max-w-[1200px] items-center gap-14 lg:grid-cols-2">
         <div className="relative">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] shadow-(--shadow-float) sm:aspect-[5/5]">
@@ -403,8 +424,8 @@ function Problem() {
           </div>
           <div className="absolute -bottom-8 -right-3 hidden w-60 rounded-2xl border border-line bg-surface p-4 shadow-(--shadow-float) sm:block lg:-right-8">
             <p className="text-xs font-semibold text-mute">{t("landing.problem.badge.label")}</p>
-            <p className="mt-1 font-display text-lg font-extrabold leading-tight text-ink">{t("landing.problem.badge.value")}</p>
-            <p className="mt-1 text-[11px] text-faint">{t("landing.problem.badge.hint")}</p>
+            <p className="mt-1 font-display text-lg font-extrabold leading-tight text-ink">{t("landing.problem.badge.value", { value: f.number(ex.value, 0) })}</p>
+            <p className="mt-1 text-[11px] text-faint">{t("landing.problem.badge.hint", { price: f.number(ex.price, 0) })}</p>
           </div>
         </div>
         <div>
@@ -440,7 +461,7 @@ function How() {
     { icon: Undo2, title: "overview.how.4.title", body: "overview.how.4.body", tile: "bg-tile-lilac" },
   ];
   return (
-    <section id="how" className="scroll-mt-20 bg-bg px-5 py-24 sm:px-8 lg:py-32">
+    <section id="how" className="scroll-mt-20 px-5 py-24 sm:px-8 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         <SectionHead center eyebrow={t("landing.how.eyebrow")} title={t("landing.how.title")} body={t("landing.how.body")} />
         <ol className="relative mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -479,7 +500,7 @@ function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | unde
     <section id="numbers" className="scroll-mt-20 px-5 py-24 sm:px-8 lg:py-32">
       <div className="mx-auto grid max-w-[1200px] items-center gap-14 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
-          <SectionHead eyebrow={t("landing.numbers.eyebrow")} title={t("landing.numbers.title")} body={t("landing.numbers.body")} />
+          <SectionHead eyebrow={t("landing.numbers.eyebrow")} title={t("landing.numbers.title", { net: f.number(ex.net, 0) })} body={t("landing.numbers.body")} />
           <dl className="mt-10 grid grid-cols-2 gap-4">
             {facts.map((fct) => {
               const Icon = fct.icon;
@@ -492,6 +513,23 @@ function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | unde
               );
             })}
           </dl>
+          <ul className="mt-6 space-y-2.5">
+            {(["landing.numbers.r1", "landing.numbers.r2", "landing.numbers.r3"] as const).map((k) => (
+              <li key={k} className="flex gap-2.5 text-sm text-ink">
+                <CircleCheck className="mt-0.5 size-4 shrink-0 text-brand-strong" aria-hidden />
+                {t(k)}
+              </li>
+            ))}
+          </ul>
+          <a
+            href={explorerAddressUrl(PROGRAM_ID)}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-navy hover:underline"
+          >
+            {t("landing.numbers.contract")}
+            <ArrowUpRight className="size-4" aria-hidden />
+          </a>
         </div>
         <div className="rounded-[28px] border border-line bg-surface p-6 shadow-(--shadow-float) sm:p-8">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -510,7 +548,7 @@ function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | unde
               { label: t("landing.numbers.w.net"), value: ex.net, display: `≈${f.number(ex.net, 0)}`, kind: "result" },
             ]}
           />
-          <p className="mt-6 text-xs leading-relaxed text-faint">{t("landing.numbers.note")}</p>
+          <p className="mt-6 text-xs leading-relaxed text-faint">{t("landing.numbers.note", { price: f.number(ex.price, 0) })}</p>
         </div>
       </div>
     </section>
@@ -550,7 +588,7 @@ function Sides({ ex }: { ex: ExampleLoan }) {
             stat={
               <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
                 <p className="font-display text-3xl font-extrabold text-brand">≈ {f.number(ex.net, 0)} USDC</p>
-                <p className="mt-1 text-sm text-white/70">{t("landing.sides.prod.stat")}</p>
+                <p className="mt-1 text-sm text-white/70">{t("landing.sides.prod.stat", { price: f.number(ex.price, 0) })}</p>
               </div>
             }
           />
@@ -680,6 +718,7 @@ function Positioning() {
           {t("landing.pos.quote")}
         </blockquote>
         <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/75 sm:text-lg">{t("landing.pos.body")}</p>
+        <p className="mt-6 text-xs text-white/50">{t("landing.pos.source")}</p>
       </div>
     </section>
   );
@@ -721,6 +760,209 @@ function Transparency() {
             );
           })}
         </ul>
+      </div>
+    </section>
+  );
+}
+
+function Market() {
+  const t = useT();
+  const stats = [1, 2, 3, 4] as const;
+  return (
+    <section className="bg-navy-deep px-5 py-24 text-white sm:px-8 lg:py-28">
+      <div className="mx-auto max-w-[1200px]">
+        <SectionHead dark eyebrow={t("landing.market.eyebrow")} title={t("landing.market.title")} body={t("landing.market.body")} />
+        <dl className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map((n) => (
+            <div key={n} className="flex flex-col rounded-[22px] border border-white/10 bg-white/[0.04] p-6">
+              <dd className="font-display text-4xl font-extrabold tracking-tight text-brand">{t(`landing.market.s${n}.value`)}</dd>
+              <dt className="mt-3 flex-1 text-sm leading-relaxed text-white/75">{t(`landing.market.s${n}.label`)}</dt>
+              <p className="mt-4 text-[11px] font-semibold uppercase tracking-wider text-white/40">{t(`landing.market.s${n}.source`)}</p>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
+function AppPreview() {
+  const t = useT();
+  return (
+    <section className="overflow-hidden bg-bg px-5 py-24 sm:px-8 lg:py-32">
+      <div className="mx-auto grid max-w-[1200px] items-center gap-14 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <SectionHead eyebrow={t("landing.preview.eyebrow")} title={t("landing.preview.title")} body={t("landing.preview.body")} />
+          <ul className="mt-8 space-y-3">
+            {(["landing.preview.b1", "landing.preview.b2", "landing.preview.b3"] as const).map((k) => (
+              <li key={k} className="flex items-center gap-3 text-[15px] font-semibold text-ink">
+                <CircleCheck className="size-5 shrink-0 text-brand-strong" aria-hidden />
+                {t(k)}
+              </li>
+            ))}
+          </ul>
+          <Link href="/app" className="mt-9 inline-flex h-12 items-center gap-2 rounded-xl bg-navy px-6 text-base font-bold text-white transition hover:bg-navy-soft">
+            {t("landing.hero.ctaApp")}
+            <ArrowRight className="size-4" aria-hidden />
+          </Link>
+        </div>
+        <div className="relative">
+          <div aria-hidden className="absolute -inset-8 rounded-[40px] bg-brand/15 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[22px] border border-line bg-surface shadow-(--shadow-float)">
+            <div className="flex items-center gap-1.5 border-b border-line bg-sunken px-4 py-2.5">
+              <span className="size-2.5 rounded-full bg-danger/50" />
+              <span className="size-2.5 rounded-full bg-warn/50" />
+              <span className="size-2.5 rounded-full bg-brand/60" />
+              <span className="ml-3 truncate font-mono text-[11px] text-faint">zafra-gilt.vercel.app/app</span>
+            </div>
+            <Image src="/landing/app-dashboard.jpg" alt={t("landing.preview.alt")} width={1400} height={1118} sizes="(min-width: 1024px) 700px, 100vw" className="h-auto w-full" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Speed() {
+  const t = useT();
+  const old = ["landing.speed.old.1", "landing.speed.old.2", "landing.speed.old.3", "landing.speed.old.4"] as const;
+  const neu = ["landing.speed.new.1", "landing.speed.new.2", "landing.speed.new.3", "landing.speed.new.4"] as const;
+  return (
+    <section className="px-5 py-24 sm:px-8 lg:py-32">
+      <div className="mx-auto max-w-[1200px]">
+        <SectionHead center eyebrow={t("landing.speed.eyebrow")} title={t("landing.speed.title")} body={t("landing.speed.body")} />
+        <div className="mt-14 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-[28px] border border-line bg-bg p-8 sm:p-10">
+            <span className="grid size-12 place-items-center rounded-2xl bg-sunken text-mute">
+              <Hourglass className="size-5" aria-hidden />
+            </span>
+            <h3 className="mt-6 text-2xl font-extrabold text-ink">{t("landing.speed.old.title")}</h3>
+            <ul className="mt-6 space-y-3">
+              {old.map((k) => (
+                <li key={k} className="flex items-center gap-3 text-[15px] text-mute">
+                  <CircleDot className="size-4 shrink-0 text-faint" aria-hidden />
+                  {t(k)}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="relative overflow-hidden rounded-[28px] bg-navy p-8 text-white sm:p-10">
+            <div aria-hidden className="av-grid pointer-events-none absolute inset-0 opacity-50" />
+            <div className="relative">
+              <span className="grid size-12 place-items-center rounded-2xl bg-brand text-navy">
+                <Timer className="size-5" aria-hidden />
+              </span>
+              <h3 className="mt-6 text-2xl font-extrabold">{t("landing.speed.new.title")}</h3>
+              <ul className="mt-6 space-y-3">
+                {neu.map((k) => (
+                  <li key={k} className="flex items-center gap-3 text-[15px] font-semibold">
+                    <CircleCheck className="size-4 shrink-0 text-brand" aria-hidden />
+                    {t(k)}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Legal() {
+  const t = useT();
+  const laws: Array<{ year: string; title: MessageKey; body: MessageKey }> = [
+    { year: "1914", title: "landing.legal.l1.title", body: "landing.legal.l1.body" },
+    { year: "2023", title: "landing.legal.l2.title", body: "landing.legal.l2.body" },
+    { year: "2024", title: "landing.legal.l3.title", body: "landing.legal.l3.body" },
+  ];
+  return (
+    <section id="legal" className="scroll-mt-20 bg-bg px-5 py-24 sm:px-8 lg:py-32">
+      <div className="mx-auto max-w-[1200px]">
+        <SectionHead eyebrow={t("landing.legal.eyebrow")} title={t("landing.legal.title")} body={t("landing.legal.body")} />
+        <ol className="mt-14 grid gap-5 lg:grid-cols-3">
+          {laws.map((l) => (
+            <li key={l.year} className="rounded-[22px] border border-line bg-surface p-6 shadow-(--shadow-card)">
+              <div className="flex items-center justify-between">
+                <span className="grid size-12 place-items-center rounded-2xl bg-tile-lime text-brand-strong">
+                  <Gavel className="size-5" aria-hidden />
+                </span>
+                <span className="font-display text-3xl font-extrabold text-ink/10">{l.year}</span>
+              </div>
+              <h3 className="mt-6 text-xl font-bold text-ink">{t(l.title)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-mute">{t(l.body)}</p>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-8 max-w-3xl text-xs leading-relaxed text-faint">{t("landing.legal.note")}</p>
+      </div>
+    </section>
+  );
+}
+
+function Faq() {
+  const t = useT();
+  const items = [1, 2, 3, 4, 5] as const;
+  return (
+    <section id="faq" className="scroll-mt-20 bg-bg px-5 py-24 sm:px-8 lg:py-32">
+      <div className="mx-auto grid max-w-[1200px] gap-14 lg:grid-cols-[0.8fr_1.2fr]">
+        <SectionHead eyebrow={t("landing.faq.eyebrow")} title={t("landing.faq.title")} />
+        <div className="divide-y divide-line overflow-hidden rounded-[24px] border border-line bg-surface shadow-(--shadow-card)">
+          {items.map((n) => (
+            <details key={n} className="group px-5 sm:px-6" open={n === 1}>
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-[15px] font-bold text-ink [&::-webkit-details-marker]:hidden">
+                {t(`landing.faq.q${n}`)}
+                <ChevronDown className="size-4 shrink-0 text-mute transition-transform group-open:rotate-180" aria-hidden />
+              </summary>
+              <p className="-mt-1 pb-5 text-sm leading-relaxed text-mute">{t(`landing.faq.a${n}`)}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Roadmap() {
+  const t = useT();
+  const steps = [1, 2, 3, 4] as const;
+  return (
+    <section className="px-5 py-24 sm:px-8 lg:py-32">
+      <div className="mx-auto max-w-[1200px]">
+        <SectionHead center eyebrow={t("landing.roadmap.eyebrow")} title={t("landing.roadmap.title")} />
+        <ol className="relative mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <span aria-hidden className="absolute left-[12%] right-[12%] top-[34px] hidden h-px bg-[repeating-linear-gradient(90deg,var(--color-line-strong)_0_6px,transparent_6px_12px)] lg:block" />
+          {steps.map((n) => (
+            <li key={n} className="relative rounded-[22px] border border-line bg-surface p-6 shadow-(--shadow-card)">
+              <span className={cx("grid size-11 place-items-center rounded-full font-display text-sm font-extrabold", n === 4 ? "bg-navy text-brand" : "bg-tile-lime text-brand-strong")}>
+                {n === 4 ? <Rocket className="size-4" aria-hidden /> : `0${n}`}
+              </span>
+              <h3 className="mt-5 text-lg font-bold text-ink">{t(`landing.roadmap.${n}.title`)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-mute">{t(`landing.roadmap.${n}.body`)}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  );
+}
+
+function BuiltOn() {
+  const t = useT();
+  const stack = ["Solana", "Anchor", "SPL Token", "USDC", "Phantom", "Next.js"];
+  return (
+    <section className="px-5 pb-16 sm:px-8">
+      <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-center gap-x-8 gap-y-4 border-y border-line py-8">
+        <span className="text-xs font-bold uppercase tracking-[0.16em] text-faint">{t("landing.built.label")}</span>
+        {stack.map((s) => (
+          <span key={s} className="font-display text-lg font-extrabold text-ink/60">
+            {s}
+          </span>
+        ))}
+        <a href={GITHUB_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm font-bold text-navy hover:underline">
+          <Code2 className="size-4" aria-hidden />
+          {t("landing.built.code")}
+        </a>
       </div>
     </section>
   );

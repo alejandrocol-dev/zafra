@@ -75,10 +75,16 @@ export function RiskSimulator({
                 <line x1="0" y1="0" x2="0" y2="8" stroke="var(--color-danger)" strokeOpacity="0.14" strokeWidth="3" />
               </pattern>
             </defs>
-            <rect x={x(MIN)} y={0} width={x(liqPrice) - x(MIN)} height={H} fill={`url(#${gid}p)`} />
-            <text x={x(liqPrice) - 8} y={H - 10} textAnchor="end" className="fill-danger text-[11px] font-semibold">
-              {t("sim.zone")}
-            </text>
+            {liqPrice > MIN && (
+              <>
+                <rect x={x(MIN)} y={0} width={x(Math.min(liqPrice, MAX)) - x(MIN)} height={H} fill={`url(#${gid}p)`} />
+                {x(liqPrice) - x(MIN) > 120 && (
+                  <text x={x(liqPrice) - 8} y={H - 10} textAnchor="end" className="fill-danger text-[11px] font-semibold">
+                    {t("sim.zone")}
+                  </text>
+                )}
+              </>
+            )}
             {[0.25, 0.5, 0.75].map((g) => (
               <line key={g} x1={0} x2={W} y1={H * g} y2={H * g} stroke="var(--color-line)" />
             ))}
