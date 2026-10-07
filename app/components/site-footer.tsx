@@ -2,9 +2,8 @@
 
 import { ExternalLink } from "lucide-react";
 import { useT } from "@/lib/i18n";
+import { PROGRAM_ID } from "@/lib/constants";
 import { explorerAddressUrl } from "@/lib/format";
-
-const PROGRAM_ID = process.env.NEXT_PUBLIC_PROGRAM_ID ?? "AERC53ZiqizgjYdJK9hCeGtSk6PfzwnEn2z3wkMKiqiJ";
 
 export function SiteFooter() {
   const t = useT();

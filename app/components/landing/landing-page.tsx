@@ -27,6 +27,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { zafra, DEFAULT_PRICE_PER_TON, type Config } from "@/lib/zafra";
+import { PROGRAM_ID } from "@/lib/constants";
 import { explorerAddressUrl } from "@/lib/format";
 import { useFmt, useT, type MessageKey } from "@/lib/i18n";
 import { useAsyncData } from "@/lib/use-async";
@@ -36,7 +37,6 @@ import { ZafraLockup, ZafraMark } from "@/components/logo";
 import { RiskSimulator } from "@/components/risk-simulator";
 import { Skeleton, cx } from "@/components/ui";
 
-const PROGRAM_ID = process.env.NEXT_PUBLIC_PROGRAM_ID ?? "AERC53ZiqizgjYdJK9hCeGtSk6PfzwnEn2z3wkMKiqiJ";
 const GITHUB_URL = "https://github.com/alejandrocol-dev/zafra";
 
 /* Canonical demo example: 100 t of soy. USD figures come from the on-chain

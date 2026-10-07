@@ -24,7 +24,7 @@ export function useView(): [View, (v: View) => void] {
   );
   const setView = useCallback((v: View) => {
     window.location.hash = v === "overview" ? "" : v;
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // useScrollTopOnChange (in the page) scrolls to top on every view change.
   }, []);
   return [view, setView];
 }

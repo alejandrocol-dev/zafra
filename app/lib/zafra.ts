@@ -439,11 +439,7 @@ class MockZafraClient implements ZafraClient {
 
   async getMyWarrants(owner: string | null): Promise<WarrantPosition[]> {
     await delay();
-    // Mock UX: always include the seeded demo producer's warrants so the view
-    // is populated before setup-devnet has issued anything to a real wallet.
-    const positions = this.state.warrants.filter(
-      (w) => w.owner === DEMO_PRODUCER || (owner !== null && w.owner === owner),
-    );
+    const positions = this.state.warrants.filter((w) => w.owner === owner);
     return positions
       .map((warrant) => ({
         warrant: { ...warrant },

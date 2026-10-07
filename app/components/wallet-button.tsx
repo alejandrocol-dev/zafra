@@ -5,7 +5,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { ChevronDown, LogOut, Wallet } from "lucide-react";
 import { shortenAddress } from "@/lib/format";
-import { useI18n, useT } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 import { Button, CopyButton } from "@/components/ui";
 
 /**
@@ -14,7 +14,6 @@ import { Button, CopyButton } from "@/components/ui";
  */
 export function WalletButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
   const t = useT();
-  const { locale } = useI18n();
   const { connected, connecting, publicKey, disconnect } = useWallet();
   const { setVisible } = useWalletModal();
   const [open, setOpen] = useState(false);
@@ -48,11 +47,9 @@ export function WalletButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
       </Button>
       {open && (
         <div className="absolute right-0 z-40 mt-2 w-56 rounded-xl border border-line-strong bg-elevated p-2 shadow-xl">
-          <p className="px-2 pb-2 pt-1 text-xs text-faint">
-            {locale === "es" ? "Wallet conectada · devnet" : "Connected wallet · devnet"}
-          </p>
+          <p className="px-2 pb-2 pt-1 text-xs text-faint">{t("wallet.connected")}</p>
           <div className="px-2 pb-2">
-            <CopyButton value={address} label={locale === "es" ? "Copiar dirección" : "Copy address"} />
+            <CopyButton value={address} label={t("wallet.copyAddress")} />
           </div>
           <button
             onClick={() => {
@@ -62,7 +59,7 @@ export function WalletButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
             className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm text-mute hover:bg-ink/5 hover:text-ink"
           >
             <LogOut className="size-4" aria-hidden />
-            {locale === "es" ? "Desconectar" : "Disconnect"}
+            {t("wallet.disconnect")}
           </button>
         </div>
       )}

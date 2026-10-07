@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useT, type MessageKey } from "@/lib/i18n";
 import { useView, type View } from "@/lib/nav";
+import { PROGRAM_ID } from "@/lib/constants";
 import { explorerAddressUrl, shortenAddress } from "@/lib/format";
 import { cx } from "@/components/ui";
 import { GuidedTour, useTourAutoStart } from "./guided-tour";
@@ -22,8 +23,6 @@ import { LocaleSwitch } from "./locale-switch";
 import { ZafraLockup, ZafraMark } from "./logo";
 import { SiteFooter } from "./site-footer";
 import { WalletButton } from "./wallet-button";
-
-const PROGRAM_ID = process.env.NEXT_PUBLIC_PROGRAM_ID ?? "AERC53ZiqizgjYdJK9hCeGtSk6PfzwnEn2z3wkMKiqiJ";
 
 type Item = { id: View; label: MessageKey; icon: LucideIcon };
 const MAIN: Item[] = [

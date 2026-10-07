@@ -1,4 +1,4 @@
-  "use client";
+"use client";
 
 import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -16,6 +16,7 @@ import {
   type PoolStats,
   type Warrant,
 } from "@/lib/zafra";
+import { MIN_SOL_FOR_FEES } from "@/lib/constants";
 import { useNowSec } from "@/lib/data-bus";
 import { useFmt, useT } from "@/lib/i18n";
 import { useView } from "@/lib/nav";
@@ -36,8 +37,6 @@ import {
   type Tone,
   type StepState,
 } from "@/components/ui";
-
-const MIN_SOL_FOR_FEES = 0.003;
 
 export function ProducerView() {
   const t = useT();

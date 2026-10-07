@@ -126,12 +126,14 @@ export function GuidedTour({
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      else if (e.key === "ArrowRight") next();
-      else if (e.key === "ArrowLeft") back();
+      else if (e.key === "ArrowRight") {
+        if (last) onClose();
+        else setI(i + 1);
+      } else if (e.key === "ArrowLeft") setI(Math.max(0, i - 1));
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  });
+  }, [i, last, onClose]);
 
   const mobile = vp.w < 640;
   let cardStyle: CSSProperties;

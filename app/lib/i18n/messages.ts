@@ -28,6 +28,11 @@ export const en = {
   "common.liveOnDevnet": "Live on devnet",
   "common.noData": "—",
 
+  // ---- wallet menu
+  "wallet.connected": "Connected wallet · devnet",
+  "wallet.copyAddress": "Copy address",
+  "wallet.disconnect": "Disconnect",
+
   // ---- nav / shell
   "nav.overview": "Overview",
   "nav.borrow": "Borrow",
@@ -598,6 +603,11 @@ export const es: Record<MessageKey, string> = {
   "common.simulated": "Simulado",
   "common.liveOnDevnet": "En vivo en devnet",
   "common.noData": "—",
+
+  // ---- wallet menu
+  "wallet.connected": "Wallet conectada · devnet",
+  "wallet.copyAddress": "Copiar dirección",
+  "wallet.disconnect": "Desconectar",
 
   // ---- nav / shell
   "nav.overview": "Inicio",
