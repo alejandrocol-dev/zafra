@@ -38,7 +38,7 @@ import { useFmt, useT, type MessageKey } from "@/lib/i18n";
 import { useAsyncData } from "@/lib/use-async";
 import { useInView } from "@/lib/use-motion";
 import { ActivityTicker } from "@/components/activity-feed";
-import { Waterfall } from "@/components/charts";
+import { SplitBar } from "@/components/charts";
 import { CountUp, Marquee, Reveal, RotatingWord, ScrollProgress } from "@/components/motion";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { ZafraLockup, ZafraMark } from "@/components/logo";
@@ -101,13 +101,10 @@ export function LandingPage() {
         <AppPreview />
         <Numbers ex={ex} config={config} />
         <PriceRisk config={config} />
-        <Speed />
-        <Legal />
+        <SpeedLegal />
         <Positioning />
         <WhyOnChain />
-        <Transparency />
-        <Faq />
-        <Roadmap />
+        <Trust />
         <BuiltOn />
         <FinalCta />
       </main>
@@ -366,10 +363,10 @@ function LiveStrip() {
     return { stats, config, tons: warrants.reduce((s, w) => s + w.tons, 0), count: warrants.length };
   });
   const items: Array<{ label: string; value?: number; format: (n: number) => string }> = [
-    { label: t("overview.kpi.liquidity"), value: data?.stats.available, format: (n) => f.usdcRound(n) },
-    { label: t("overview.kpi.tons"), value: data?.tons, format: (n) => f.tons(Math.round(n)) },
+    { label: t("landing.live.liq"), value: data?.stats.available, format: (n) => f.usdcRound(n) },
+    { label: t("landing.live.tons"), value: data?.tons, format: (n) => f.tons(Math.round(n)) },
     { label: t("landing.live.warrants"), value: data?.count, format: (n) => f.number(Math.round(n), 0) },
-    { label: t("overview.kpi.ltv"), value: data ? data.config.ltvBps / 100 : undefined, format: (n) => `${f.number(Math.round(n), 0)}%` },
+    { label: t("landing.live.ltv"), value: data ? data.config.ltvBps / 100 : undefined, format: (n) => t("landing.live.ltvValue", { n: f.number(Math.round(n), 0) }) },
   ];
   return (
     <section className="relative z-10 -mt-14 px-5 sm:px-8">
@@ -392,6 +389,7 @@ function LiveStrip() {
             <ArrowUpRight className="size-3.5" aria-hidden />
           </a>
         </div>
+        <p className="-mt-3 mb-5 text-xs text-mute">{t("landing.live.what")}</p>
         {error && !data ? (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-mute">{t("overview.kpi.error")}</p>
@@ -428,18 +426,20 @@ function SectionHead({
   body,
   center,
   dark,
+  lime,
 }: {
   eyebrow: string;
   title: ReactNode;
   body?: ReactNode;
   center?: boolean;
   dark?: boolean;
+  lime?: boolean;
 }) {
   return (
     <Reveal className={cx("max-w-2xl", center && "mx-auto text-center")}>
-      <p className={cx("text-xs font-bold uppercase tracking-[0.16em]", dark ? "text-brand" : "text-brand-strong")}>{eyebrow}</p>
+      <p className={cx("text-xs font-bold uppercase tracking-[0.16em]", lime ? "text-navy/75" : dark ? "text-brand" : "text-brand-strong")}>{eyebrow}</p>
       <h2 className={cx("mt-3 text-3xl font-extrabold leading-[1.1] sm:text-[44px]", dark ? "text-white" : "text-ink")}>{title}</h2>
-      {body && <p className={cx("mt-4 text-base leading-relaxed sm:text-lg", dark ? "text-white/70" : "text-mute")}>{body}</p>}
+      {body && <p className={cx("mt-4 text-base leading-relaxed sm:text-lg", lime ? "text-navy/70" : dark ? "text-white/70" : "text-mute")}>{body}</p>}
     </Reveal>
   );
 }
@@ -502,12 +502,12 @@ function How() {
     { icon: Undo2, title: "overview.how.4.title", body: "overview.how.4.body", tile: "bg-tile-lilac" },
   ];
   return (
-    <section id="how" className="scroll-mt-20 px-5 py-24 sm:px-8 lg:py-32">
+    <section id="how" className="scroll-mt-20 bg-brand px-5 py-24 sm:px-8 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
-        <SectionHead center eyebrow={t("landing.how.eyebrow")} title={t("landing.how.title")} body={t("landing.how.body")} />
+        <SectionHead center lime eyebrow={t("landing.how.eyebrow")} title={t("landing.how.title")} body={t("landing.how.body")} />
         <ol className="relative mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <span aria-hidden className="absolute left-[12%] right-[12%] top-[52px] hidden h-px bg-[repeating-linear-gradient(90deg,var(--color-line-strong)_0_6px,transparent_6px_12px)] lg:block" />
-          <span aria-hidden className="av-travel absolute top-[46px] z-10 hidden size-3 -translate-x-1/2 rounded-full bg-brand shadow-[0_0_18px_6px_rgba(133,218,7,0.65)] lg:block" />
+          <span aria-hidden className="absolute left-[12%] right-[12%] top-[52px] hidden h-px bg-[repeating-linear-gradient(90deg,rgba(6,25,61,0.35)_0_6px,transparent_6px_12px)] lg:block" />
+          <span aria-hidden className="av-travel absolute top-[46px] z-10 hidden size-3 -translate-x-1/2 rounded-full bg-navy shadow-[0_0_18px_6px_rgba(255,255,255,0.75)] lg:block" />
           {steps.map((s, i) => {
             const Icon = s.icon;
             return (
@@ -548,26 +548,27 @@ function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | unde
   ];
   const [chartRef, chartIn] = useInView<HTMLDivElement>("0px 0px -20% 0px");
   return (
-    <section id="numbers" className="scroll-mt-20 px-5 py-24 sm:px-8 lg:py-32">
+    <section id="numbers" className="relative isolate scroll-mt-20 overflow-hidden bg-navy-deep px-5 py-24 text-white sm:px-8 lg:py-32">
+      <div aria-hidden className="av-grid pointer-events-none absolute inset-0 -z-10 opacity-40" />
       <div className="mx-auto grid max-w-[1200px] items-center gap-14 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
-          <SectionHead eyebrow={t("landing.numbers.eyebrow")} title={t("landing.numbers.title", { net: f.number(ex.net, 0) })} body={t("landing.numbers.body")} />
+          <SectionHead dark eyebrow={t("landing.numbers.eyebrow")} title={t("landing.numbers.title", { net: f.number(ex.net, 0) })} body={t("landing.numbers.body")} />
           <dl className="mt-10 grid grid-cols-2 gap-4">
             {facts.map((fct, i) => {
               const Icon = fct.icon;
               return (
-                <Reveal delay={i * 90} key={fct.label} className="rounded-2xl border border-line bg-surface p-4 hover:-translate-y-1 hover:shadow-(--shadow-card)">
-                  <Icon className="size-5 text-brand-strong" aria-hidden />
-                  <dd className="mt-3 font-display text-2xl font-extrabold text-ink">{fct.value}</dd>
-                  <dt className="mt-0.5 text-xs text-mute">{t(fct.label)}</dt>
+                <Reveal delay={i * 90} key={fct.label} className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 hover:-translate-y-1 hover:bg-white/[0.07]">
+                  <Icon className="size-5 text-brand" aria-hidden />
+                  <dd className="mt-3 font-display text-2xl font-extrabold text-white">{fct.value}</dd>
+                  <dt className="mt-0.5 text-xs text-white/60">{t(fct.label)}</dt>
                 </Reveal>
               );
             })}
           </dl>
           <ul className="mt-6 space-y-2.5">
             {(["landing.numbers.r1", "landing.numbers.r2", "landing.numbers.r3"] as const).map((k) => (
-              <li key={k} className="flex gap-2.5 text-sm text-ink">
-                <CircleCheck className="mt-0.5 size-4 shrink-0 text-brand-strong" aria-hidden />
+              <li key={k} className="flex gap-2.5 text-sm text-white/80">
+                <CircleCheck className="mt-0.5 size-4 shrink-0 text-brand" aria-hidden />
                 {t(k)}
               </li>
             ))}
@@ -576,7 +577,7 @@ function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | unde
             href={explorerAddressUrl(PROGRAM_ID)}
             target="_blank"
             rel="noreferrer"
-            className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-navy hover:underline"
+            className="mt-5 inline-flex items-center gap-1 text-sm font-bold text-brand hover:underline"
           >
             {t("landing.numbers.contract")}
             <ArrowUpRight className="size-4" aria-hidden />
@@ -589,15 +590,14 @@ function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | unde
               {f.tons(EX_TONS)} · {t("status.grain.soybean")} · {f.number(ex.price, 0)} USDC/t
             </span>
           </div>
-          <Waterfall
-            className="mt-2"
-            height={240}
+          <SplitBar
+            className="mt-6"
             active={chartIn}
-            steps={[
-              { label: t("landing.numbers.w.value"), value: ex.value, display: f.number(ex.value, 0), kind: "total" },
-              { label: t("landing.numbers.w.haircut"), value: -(ex.value - ex.loan), display: `−${f.number(ex.value - ex.loan, 0)}`, kind: "delta" },
-              { label: t("landing.numbers.w.fee"), value: -ex.fee, display: `−${f.number(ex.fee, 0)}`, kind: "delta" },
-              { label: t("landing.numbers.w.net"), value: ex.net, display: `≈${f.number(ex.net, 0)}`, kind: "result" },
+            total={{ label: t("landing.numbers.w.value"), display: `${f.number(ex.value, 0)} USDC` }}
+            segments={[
+              { label: t("landing.numbers.w.net"), value: ex.net, display: `≈${f.number(ex.net, 0)}`, kind: "net" },
+              { label: t("landing.numbers.w.fee"), value: ex.fee, display: `−${f.number(ex.fee, 0)}`, kind: "fee" },
+              { label: t("landing.numbers.w.haircut"), value: ex.value - ex.loan, display: `−${f.number(ex.value - ex.loan, 0)}`, kind: "margin" },
             ]}
           />
           <p className="mt-6 text-xs leading-relaxed text-faint">{t("landing.numbers.note", { price: f.number(ex.price, 0) })}</p>
@@ -781,47 +781,6 @@ function Positioning() {
   );
 }
 
-function Transparency() {
-  const t = useT();
-  type Status = "real" | "sim" | "out" | "pending";
-  const rows: Array<[MessageKey, Status]> = [
-    ["landing.trust.r1", "real"],
-    ["landing.trust.r2", "real"],
-    ["landing.trust.r3", "sim"],
-    ["landing.trust.r4", "sim"],
-    ["landing.trust.r5", "out"],
-    ["landing.trust.r6", "pending"],
-  ];
-  const badge: Record<Status, { label: MessageKey; cls: string; icon: LucideIcon }> = {
-    real: { label: "landing.trust.s.real", cls: "bg-tile-lime text-brand-strong", icon: CircleCheck },
-    sim: { label: "landing.trust.s.sim", cls: "bg-tile-amber text-warn", icon: CircleDashed },
-    out: { label: "landing.trust.s.out", cls: "bg-sunken text-mute", icon: CircleDot },
-    pending: { label: "landing.trust.s.pending", cls: "bg-danger/10 text-danger", icon: CircleDot },
-  };
-  return (
-    <section id="transparency" className="scroll-mt-20 px-5 py-24 sm:px-8 lg:py-32">
-      <div className="mx-auto grid max-w-[1200px] gap-14 lg:grid-cols-[0.8fr_1.2fr]">
-        <SectionHead eyebrow={t("landing.trust.eyebrow")} title={t("landing.trust.title")} body={t("landing.trust.body")} />
-        <ul className="divide-y divide-line overflow-hidden rounded-[24px] border border-line bg-surface shadow-(--shadow-card)">
-          {rows.map(([key, status]) => {
-            const b = badge[status];
-            const Icon = b.icon;
-            return (
-              <li key={key} className="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
-                <span className="text-[15px] font-semibold text-ink">{t(key)}</span>
-                <span className={cx("inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold", b.cls)}>
-                  <Icon className="size-3.5" aria-hidden />
-                  {t(b.label)}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </section>
-  );
-}
-
 function Market() {
   const t = useT();
   const f = useFmt();
@@ -894,10 +853,15 @@ function AppPreview() {
   );
 }
 
-function Speed() {
+function SpeedLegal() {
   const t = useT();
   const old = ["landing.speed.old.1", "landing.speed.old.2", "landing.speed.old.3", "landing.speed.old.4"] as const;
   const neu = ["landing.speed.new.1", "landing.speed.new.2", "landing.speed.new.3", "landing.speed.new.4"] as const;
+  const laws: Array<{ year: string; title: MessageKey; body: MessageKey }> = [
+    { year: "1914", title: "landing.legal.l1.title", body: "landing.legal.l1.body" },
+    { year: "2023", title: "landing.legal.l2.title", body: "landing.legal.l2.body" },
+    { year: "2024", title: "landing.legal.l3.title", body: "landing.legal.l3.body" },
+  ];
   return (
     <section className="px-5 py-24 sm:px-8 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
@@ -935,84 +899,113 @@ function Speed() {
             </div>
           </Reveal>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function Legal() {
-  const t = useT();
-  const laws: Array<{ year: string; title: MessageKey; body: MessageKey }> = [
-    { year: "1914", title: "landing.legal.l1.title", body: "landing.legal.l1.body" },
-    { year: "2023", title: "landing.legal.l2.title", body: "landing.legal.l2.body" },
-    { year: "2024", title: "landing.legal.l3.title", body: "landing.legal.l3.body" },
-  ];
-  return (
-    <section id="legal" className="scroll-mt-20 bg-bg px-5 py-24 sm:px-8 lg:py-32">
-      <div className="mx-auto max-w-[1200px]">
-        <SectionHead eyebrow={t("landing.legal.eyebrow")} title={t("landing.legal.title")} body={t("landing.legal.body")} />
-        <ol className="mt-14 grid gap-5 lg:grid-cols-3">
-          {laws.map((l, i) => (
-            <Reveal as="li" delay={i * 140} key={l.year} className="rounded-[22px] border border-line bg-surface p-6 shadow-(--shadow-card) hover:-translate-y-1 hover:shadow-(--shadow-float)">
-              <div className="flex items-center justify-between">
-                <span className="grid size-12 place-items-center rounded-2xl bg-tile-lime text-brand-strong">
-                  <Gavel className="size-5" aria-hidden />
-                </span>
-                <span className="font-display text-3xl font-extrabold text-ink/10">{l.year}</span>
-              </div>
-              <h3 className="mt-6 text-xl font-bold text-ink">{t(l.title)}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-mute">{t(l.body)}</p>
-            </Reveal>
-          ))}
-        </ol>
-        <p className="mt-8 max-w-3xl text-xs leading-relaxed text-faint">{t("landing.legal.note")}</p>
-      </div>
-    </section>
-  );
-}
-
-function Faq() {
-  const t = useT();
-  const items = [1, 2, 3, 4, 5] as const;
-  return (
-    <section id="faq" className="scroll-mt-20 bg-bg px-5 py-24 sm:px-8 lg:py-32">
-      <div className="mx-auto grid max-w-[1200px] gap-14 lg:grid-cols-[0.8fr_1.2fr]">
-        <SectionHead eyebrow={t("landing.faq.eyebrow")} title={t("landing.faq.title")} />
-        <div className="divide-y divide-line overflow-hidden rounded-[24px] border border-line bg-surface shadow-(--shadow-card)">
-          {items.map((n) => (
-            <details key={n} className="group px-5 sm:px-6" open={n === 1}>
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-[15px] font-bold text-ink [&::-webkit-details-marker]:hidden">
-                {t(`landing.faq.q${n}`)}
-                <ChevronDown className="size-4 shrink-0 text-mute transition-transform group-open:rotate-180" aria-hidden />
-              </summary>
-              <p className="-mt-1 pb-5 text-sm leading-relaxed text-mute">{t(`landing.faq.a${n}`)}</p>
-            </details>
-          ))}
+        <div id="legal" className="scroll-mt-28">
+          <Reveal className="mt-8 rounded-[28px] border border-line bg-bg p-8 sm:p-10">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">{t("landing.legal.eyebrow")}</p>
+            <h3 className="mt-3 text-2xl font-extrabold text-ink sm:text-3xl">{t("landing.legal.title")}</h3>
+            <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-mute">{t("landing.legal.body")}</p>
+            <div className="mt-8 grid gap-6 border-t border-line pt-8 sm:grid-cols-3">
+              {laws.map((l) => (
+                <div key={l.year} className="flex gap-4">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-tile-lime text-brand-strong">
+                    <Gavel className="size-5" aria-hidden />
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wider text-faint">{l.year}</p>
+                    <h4 className="mt-0.5 font-bold text-ink">{t(l.title)}</h4>
+                    <p className="mt-1 text-[13px] leading-relaxed text-mute">{t(l.body)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-8 border-t border-line pt-5 text-xs leading-relaxed text-faint">{t("landing.legal.note")}</p>
+          </Reveal>
         </div>
       </div>
     </section>
   );
 }
 
-function Roadmap() {
+function Trust() {
   const t = useT();
+  type Status = "real" | "sim" | "out" | "pending";
+  const rows: Array<[MessageKey, Status]> = [
+    ["landing.trust.r1", "real"],
+    ["landing.trust.r2", "real"],
+    ["landing.trust.r3", "sim"],
+    ["landing.trust.r4", "sim"],
+    ["landing.trust.r5", "out"],
+    ["landing.trust.r6", "pending"],
+  ];
+  const badge: Record<Status, { label: MessageKey; cls: string; icon: LucideIcon }> = {
+    real: { label: "landing.trust.s.real", cls: "bg-tile-lime text-brand-strong", icon: CircleCheck },
+    sim: { label: "landing.trust.s.sim", cls: "bg-tile-amber text-warn", icon: CircleDashed },
+    out: { label: "landing.trust.s.out", cls: "bg-sunken text-mute", icon: CircleDot },
+    pending: { label: "landing.trust.s.pending", cls: "bg-danger/10 text-danger", icon: CircleDot },
+  };
+  const faqItems = [1, 2, 3, 4, 5] as const;
   const steps = [1, 2, 3, 4] as const;
   return (
-    <section className="px-5 py-24 sm:px-8 lg:py-32">
+    <section id="transparency" className="scroll-mt-20 bg-bg px-5 py-24 sm:px-8 lg:py-28">
       <div className="mx-auto max-w-[1200px]">
-        <SectionHead center eyebrow={t("landing.roadmap.eyebrow")} title={t("landing.roadmap.title")} />
-        <ol className="relative mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <span aria-hidden className="absolute left-[12%] right-[12%] top-[34px] hidden h-px bg-[repeating-linear-gradient(90deg,var(--color-line-strong)_0_6px,transparent_6px_12px)] lg:block" />
-          {steps.map((n, i) => (
-            <Reveal as="li" delay={i * 140} key={n} className="relative rounded-[22px] border border-line bg-surface p-6 shadow-(--shadow-card) hover:-translate-y-1 hover:shadow-(--shadow-float)">
-              <span className={cx("grid size-11 place-items-center rounded-full font-display text-sm font-extrabold", n === 4 ? "bg-navy text-brand" : "bg-tile-lime text-brand-strong")}>
-                {n === 4 ? <Rocket className="size-4" aria-hidden /> : `0${n}`}
-              </span>
-              <h3 className="mt-5 text-lg font-bold text-ink">{t(`landing.roadmap.${n}.title`)}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-mute">{t(`landing.roadmap.${n}.body`)}</p>
+        <SectionHead eyebrow={t("landing.trust.eyebrow")} title={t("landing.trust.title")} body={t("landing.trust.body")} />
+        <div className="mt-12 grid items-start gap-6 lg:grid-cols-2">
+          <Reveal>
+            <ul className="divide-y divide-line overflow-hidden rounded-[24px] border border-line bg-surface shadow-(--shadow-card)">
+              {rows.map(([key, status]) => {
+                const b = badge[status];
+                const Icon = b.icon;
+                return (
+                  <li key={key} className="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
+                    <span className="text-[15px] font-semibold text-ink">{t(key)}</span>
+                    <span className={cx("inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold", b.cls)}>
+                      <Icon className="size-3.5" aria-hidden />
+                      {t(b.label)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </Reveal>
+          <div id="faq" className="scroll-mt-28">
+            <Reveal delay={150} className="rounded-[24px] border border-line bg-surface shadow-(--shadow-card)">
+              <div className="px-5 pt-5 sm:px-6">
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">{t("landing.faq.eyebrow")}</p>
+                <h3 className="mt-1.5 text-lg font-extrabold text-ink">{t("landing.faq.title")}</h3>
+              </div>
+              <div className="mt-3 divide-y divide-line">
+                {faqItems.map((n) => (
+                  <details key={n} className="group px-5 sm:px-6" open={n === 1}>
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[15px] font-bold text-ink [&::-webkit-details-marker]:hidden">
+                      {t(`landing.faq.q${n}`)}
+                      <ChevronDown className="size-4 shrink-0 text-mute transition-transform group-open:rotate-180" aria-hidden />
+                    </summary>
+                    <p className="-mt-1 pb-4 text-sm leading-relaxed text-mute">{t(`landing.faq.a${n}`)}</p>
+                  </details>
+                ))}
+              </div>
             </Reveal>
-          ))}
-        </ol>
+          </div>
+        </div>
+        <div className="mt-14">
+          <Reveal>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">{t("landing.roadmap.eyebrow")}</p>
+            <h3 className="mt-1.5 text-2xl font-extrabold text-ink sm:text-3xl">{t("landing.roadmap.title")}</h3>
+          </Reveal>
+          <ol className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((n, i) => (
+              <Reveal as="li" delay={i * 110} key={n} className="rounded-[20px] border border-line bg-surface p-5 hover:-translate-y-1 hover:shadow-(--shadow-card)">
+                <div className="flex items-center gap-3">
+                  <span className={cx("grid size-8 shrink-0 place-items-center rounded-full font-display text-xs font-extrabold", n === 4 ? "bg-navy text-brand" : "bg-tile-lime text-brand-strong")}>
+                    {n === 4 ? <Rocket className="size-3.5" aria-hidden /> : `0${n}`}
+                  </span>
+                  <h4 className="font-bold leading-snug text-ink">{t(`landing.roadmap.${n}.title`)}</h4>
+                </div>
+                <p className="mt-2.5 text-[13px] leading-relaxed text-mute">{t(`landing.roadmap.${n}.body`)}</p>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );

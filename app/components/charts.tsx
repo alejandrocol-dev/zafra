@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { cx } from "@/components/ui";
 
 /* Hand-rolled SVG charts: no chart dependency, styled with the design tokens. */
 
@@ -108,63 +107,68 @@ export function BarList({
   );
 }
 
-/** Vertical waterfall: start value, then deltas, ending in a total column. */
-export function Waterfall({
-  steps,
-  height = 220,
+/** Receipt-style split: one bar showing the guarantee's value divided into
+    what you get, the fee, and the pool's safety margin — no floating bars. */
+export function SplitBar({
+  total,
+  segments,
   className,
   active = true,
 }: {
-  steps: Array<{ label: ReactNode; value: number; display: ReactNode; kind: "total" | "delta" | "result" }>;
-  height?: number;
+  total: { label: ReactNode; display: ReactNode };
+  segments: Array<{ label: ReactNode; value: number; display: ReactNode; kind: "net" | "fee" | "margin" }>;
   className?: string;
-  /** When false, bars sit collapsed; flipping to true grows them in sequence. */
+  /** When false, segments sit collapsed; flipping to true grows them in sequence. */
   active?: boolean;
 }) {
-  const top = Math.max(...steps.map((s) => s.value));
-  const bars = steps.reduce<Array<(typeof steps)[number] & { base: number; size: number; end: number }>>((acc, s) => {
-    const prev = acc.length ? acc[acc.length - 1].end : 0;
-    if (s.kind === "delta") {
-      const end = prev + s.value;
-      return [...acc, { ...s, base: Math.min(prev, end), size: Math.abs(s.value), end }];
-    }
-    return [...acc, { ...s, base: 0, size: s.value, end: s.value }];
-  }, []);
-  const color = {
-    total: "var(--color-navy)",
-    delta: "repeating-linear-gradient(135deg, rgba(6,25,61,0.16) 0 6px, rgba(6,25,61,0.08) 6px 12px)",
-    result: "var(--color-brand)",
-  };
+  const sum = segments.reduce((s, x) => s + x.value, 0);
+  const bg = {
+    net: "var(--color-brand)",
+    fee: "var(--color-warn)",
+    margin: undefined,
+  } as const;
+  const marginStyle = { background: "repeating-linear-gradient(135deg, rgba(6,25,61,0.16) 0 6px, rgba(6,25,61,0.08) 6px 12px)" };
 
   return (
-    <div className={cx("grid gap-3", className)} style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }}>
-      {bars.map((b, i) => (
-        <div key={i} className="flex flex-col">
-          <div className="relative mt-7" style={{ height }}>
-            <div
-              className="absolute inset-x-1 origin-bottom rounded-lg transition-all duration-700 ease-out"
-              style={{
-                bottom: `${(b.base / top) * 100}%`,
-                height: `max(${(b.size / top) * 100}%, 4px)`,
-                background: color[b.kind],
-                transform: active ? "scaleY(1)" : "scaleY(0)",
-                transitionDelay: active ? `${i * 260}ms` : "0ms",
-              }}
-            />
-            <span
-              className="absolute inset-x-0 text-center text-xs font-bold text-ink tabular-nums transition-opacity duration-500 sm:text-sm"
-              style={{
-                bottom: `calc(${((b.base + b.size) / top) * 100}% + 6px)`,
-                opacity: active ? 1 : 0,
-                transitionDelay: active ? `${i * 260 + 450}ms` : "0ms",
-              }}
-            >
-              {b.display}
-            </span>
+    <div className={className}>
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="text-xs font-bold uppercase tracking-[0.14em] text-mute">{total.label}</p>
+        <p className="font-display text-xl font-extrabold tabular-nums text-ink">{total.display}</p>
+      </div>
+      <div className="mt-3 flex h-16 gap-0.5 overflow-hidden rounded-xl sm:h-20">
+        {segments.map((s, i) => (
+          <div
+            key={i}
+            className="flex origin-left items-center justify-center text-sm font-extrabold transition-transform duration-700 ease-out sm:text-base"
+            style={{
+              width: `${(s.value / sum) * 100}%`,
+              ...(s.kind === "margin" ? marginStyle : { backgroundColor: bg[s.kind] }),
+              transform: active ? "scaleX(1)" : "scaleX(0)",
+              transitionDelay: active ? `${i * 320}ms` : "0ms",
+            }}
+          >
+            {s.value / sum > 0.14 && <span className={s.kind === "net" ? "text-navy" : "text-navy/60"}>{s.display}</span>}
           </div>
-          <p className="mt-3 border-t border-line pt-2 text-center text-[11px] leading-tight text-mute sm:text-xs">{b.label}</p>
-        </div>
-      ))}
+        ))}
+      </div>
+      <ul className="mt-5 space-y-2.5">
+        {segments.map((s, i) => (
+          <li
+            key={i}
+            className="flex items-center justify-between gap-4 text-sm transition-opacity duration-500"
+            style={{ opacity: active ? 1 : 0, transitionDelay: active ? `${i * 320 + 500}ms` : "0ms" }}
+          >
+            <span className="flex min-w-0 items-center gap-2.5 text-mute">
+              <span
+                className="size-2.5 shrink-0 rounded-full"
+                style={s.kind === "margin" ? marginStyle : { backgroundColor: bg[s.kind] }}
+              />
+              {s.label}
+            </span>
+            <span className="shrink-0 font-bold tabular-nums text-ink">{s.display}</span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
