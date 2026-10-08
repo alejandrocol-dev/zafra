@@ -587,9 +587,11 @@ export class RealZafraClient implements ZafraClient {
       sigs.map((s) => s.signature),
       { commitment: "confirmed", maxSupportedTransactionVersion: 0 },
     );
-    return sigs.map((s, i) => ({
+    // Batch responses can come back in any order: match each tx to its signature.
+    const logsBySig = new Map(txs.map((tx) => [tx?.transaction.signatures[0], tx?.meta?.logMessages]));
+    return sigs.map((s) => ({
       signature: s.signature,
-      kind: activityKindFromLogs(txs[i]?.meta?.logMessages),
+      kind: activityKindFromLogs(logsBySig.get(s.signature)),
       blockTime: s.blockTime ?? null,
       failed: s.err !== null,
     }));

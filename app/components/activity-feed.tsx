@@ -12,8 +12,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { zafra, type ActivityKind } from "@/lib/zafra";
+import { explorerTxUrl } from "@/lib/format";
 import { useFmt, useT, type MessageKey } from "@/lib/i18n";
 import { useAsyncData } from "@/lib/use-async";
+import { Marquee } from "@/components/motion";
 import { Button, ExplorerLink, Notice, Skeleton, cx } from "@/components/ui";
 
 const KIND: Record<ActivityKind, { icon: LucideIcon; label: MessageKey; tile: string }> = {
@@ -26,6 +28,45 @@ const KIND: Record<ActivityKind, { icon: LucideIcon; label: MessageKey; tile: st
   liquidate: { icon: Gavel, label: "activity.liquidate", tile: "bg-danger/10 text-danger" },
   other: { icon: CircleDot, label: "activity.other", tile: "bg-sunken text-mute" },
 };
+
+/** Endless ticker of real program transactions. Renders nothing until there's enough to scroll. */
+export function ActivityTicker({ limit = 8, label }: { limit?: number; label?: string }) {
+  const t = useT();
+  const f = useFmt();
+  const { data } = useAsyncData(() => zafra.getRecentActivity(limit), limit);
+  const items = (data ?? []).filter((a) => !a.failed && a.kind !== "other");
+  if (items.length < 3) return null;
+  return (
+    <div>
+      {label && <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.14em] text-faint">{label}</p>}
+      <Marquee speed={Math.max(30, items.length * 5)}>
+        {(copy) =>
+          items.map((a) => {
+            const k = KIND[a.kind];
+            const Icon = k.icon;
+            return (
+              <a
+                key={a.signature}
+                href={explorerTxUrl(a.signature)}
+                target="_blank"
+                rel="noreferrer"
+                tabIndex={copy ? -1 : undefined}
+                className="mr-3 inline-flex shrink-0 items-center gap-2.5 rounded-full border border-line bg-surface py-1.5 pl-1.5 pr-4 text-sm transition-colors hover:border-line-strong hover:bg-sunken"
+              >
+                <span className={cx("grid size-7 place-items-center rounded-full", k.tile)}>
+                  <Icon className="size-3.5" aria-hidden />
+                </span>
+                <span className="font-semibold text-ink">{t(k.label)}</span>
+                <span className="text-xs text-faint">{a.blockTime ? f.ago(a.blockTime) : ""}</span>
+                <span className="font-mono text-[11px] text-mute">{a.signature.slice(0, 4)}…</span>
+              </a>
+            );
+          })
+        }
+      </Marquee>
+    </div>
+  );
+}
 
 /** Latest program transactions on devnet, each one linked to the explorer. */
 export function ActivityFeed({ limit = 8 }: { limit?: number }) {

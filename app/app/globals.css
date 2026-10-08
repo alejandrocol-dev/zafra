@@ -113,6 +113,48 @@ h1, h2, h3, blockquote, .font-display {
   animation: av-shimmer 1.4s linear infinite;
 }
 
+/* Landing motion */
+@keyframes av-word {
+  from { opacity: 0; transform: translateY(0.35em); filter: blur(6px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+@keyframes av-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes av-travel {
+  0% { left: 12%; opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { left: 88%; opacity: 0; }
+}
+@keyframes av-ping-ring {
+  0% { box-shadow: 0 0 0 0 rgba(133, 218, 7, 0.55); }
+  14%, 100% { box-shadow: 0 0 0 14px rgba(133, 218, 7, 0); }
+}
+@keyframes av-glint {
+  0%, 70% { transform: translateX(-120%) skewX(-18deg); }
+  100% { transform: translateX(220%) skewX(-18deg); }
+}
+.av-word { animation: av-word 520ms cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.av-marquee { animation: av-marquee 40s linear infinite; }
+.av-travel { animation: av-travel 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+.av-ping-ring { animation: av-ping-ring 3.6s ease-out infinite; }
+.av-glint { animation: av-glint 5s ease-in-out infinite; }
+.av-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 750ms cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms),
+    transform 750ms cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0ms),
+    translate 250ms ease,
+    box-shadow 250ms ease;
+}
+.av-reveal.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .av-marquee, .av-travel, .av-ping-ring, .av-glint { animation: none; }
+}
+
 /* Subtle dotted grid used behind hero sections. */
 .av-grid {
   background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);

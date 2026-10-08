@@ -113,10 +113,13 @@ export function Waterfall({
   steps,
   height = 220,
   className,
+  active = true,
 }: {
   steps: Array<{ label: ReactNode; value: number; display: ReactNode; kind: "total" | "delta" | "result" }>;
   height?: number;
   className?: string;
+  /** When false, bars sit collapsed; flipping to true grows them in sequence. */
+  active?: boolean;
 }) {
   const top = Math.max(...steps.map((s) => s.value));
   const bars = steps.reduce<Array<(typeof steps)[number] & { base: number; size: number; end: number }>>((acc, s) => {
@@ -139,16 +142,22 @@ export function Waterfall({
         <div key={i} className="flex flex-col">
           <div className="relative mt-7" style={{ height }}>
             <div
-              className="absolute inset-x-1 rounded-lg transition-all duration-700"
+              className="absolute inset-x-1 origin-bottom rounded-lg transition-all duration-700 ease-out"
               style={{
                 bottom: `${(b.base / top) * 100}%`,
                 height: `max(${(b.size / top) * 100}%, 4px)`,
                 background: color[b.kind],
+                transform: active ? "scaleY(1)" : "scaleY(0)",
+                transitionDelay: active ? `${i * 260}ms` : "0ms",
               }}
             />
             <span
-              className="absolute inset-x-0 text-center text-xs font-bold text-ink tabular-nums sm:text-sm"
-              style={{ bottom: `calc(${((b.base + b.size) / top) * 100}% + 6px)` }}
+              className="absolute inset-x-0 text-center text-xs font-bold text-ink tabular-nums transition-opacity duration-500 sm:text-sm"
+              style={{
+                bottom: `calc(${((b.base + b.size) / top) * 100}% + 6px)`,
+                opacity: active ? 1 : 0,
+                transitionDelay: active ? `${i * 260 + 450}ms` : "0ms",
+              }}
             >
               {b.display}
             </span>
