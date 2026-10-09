@@ -8,7 +8,6 @@ import {
   ArrowUpRight,
   BadgeCheck,
   CircleCheck,
-  CircleDashed,
   CircleDot,
   Clock3,
   Code2,
@@ -43,7 +42,7 @@ import { CountUp, Marquee, Reveal, RotatingWord, ScrollProgress } from "@/compon
 import { LocaleSwitch } from "@/components/locale-switch";
 import { ZafraLockup, ZafraMark } from "@/components/logo";
 import { RiskSimulator } from "@/components/risk-simulator";
-import { Button, Skeleton, cx } from "@/components/ui";
+import { Button, IconTile, Skeleton, cx } from "@/components/ui";
 
 const GITHUB_URL = "https://github.com/alejandrocol-dev/zafra";
 
@@ -457,11 +456,8 @@ function Problem({ ex }: { ex: ExampleLoan }) {
       <div className="mx-auto grid max-w-[1200px] items-center gap-14 lg:grid-cols-2">
         <Reveal className="relative">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] shadow-(--shadow-float) sm:aspect-[5/5]">
-            <Image src="/landing/producer-hand.jpg" alt={t("landing.problem.photoAlt")} fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
+            <Image src="/landing/campo.jpg" alt={t("landing.problem.photoAlt")} fill sizes="(min-width: 1024px) 560px, 100vw" className="object-cover" />
             <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-navy-deep/70 via-transparent to-transparent" />
-            <p className="absolute bottom-5 left-5 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-navy backdrop-blur">
-              Laprida, Argentina
-            </p>
           </div>
           <div className="absolute -bottom-8 -right-3 hidden w-60 rounded-2xl border border-line bg-surface p-4 shadow-(--shadow-float) sm:block lg:-right-8">
             <p className="text-xs font-semibold text-mute">{t("landing.problem.badge.label")}</p>
@@ -476,9 +472,7 @@ function Problem({ ex }: { ex: ExampleLoan }) {
               const Icon = p.icon;
               return (
                 <Reveal as="li" delay={i * 120} key={p.title} className="flex gap-4">
-                  <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-tile-lime text-brand-strong">
-                    <Icon className="size-5" aria-hidden />
-                  </span>
+                  <IconTile icon={Icon} tone="lime" />
                   <div>
                     <h3 className="text-lg font-bold text-ink">{t(p.title)}</h3>
                     <p className="mt-1 text-[15px] leading-relaxed text-mute">{t(p.body)}</p>
@@ -495,14 +489,14 @@ function Problem({ ex }: { ex: ExampleLoan }) {
 
 function How() {
   const t = useT();
-  const steps: Array<{ icon: LucideIcon; title: MessageKey; body: MessageKey; tile: string }> = [
-    { icon: FileCheck2, title: "overview.how.1.title", body: "overview.how.1.body", tile: "bg-tile-lime" },
-    { icon: Lock, title: "overview.how.2.title", body: "overview.how.2.body", tile: "bg-tile-sky" },
-    { icon: Banknote, title: "overview.how.3.title", body: "overview.how.3.body", tile: "bg-tile-amber" },
-    { icon: Undo2, title: "overview.how.4.title", body: "overview.how.4.body", tile: "bg-tile-lilac" },
+  const steps: Array<{ icon: LucideIcon; title: MessageKey; body: MessageKey; tile: "lime" | "sky" | "amber" | "lilac" }> = [
+    { icon: FileCheck2, title: "overview.how.1.title", body: "overview.how.1.body", tile: "lime" },
+    { icon: Lock, title: "overview.how.2.title", body: "overview.how.2.body", tile: "sky" },
+    { icon: Banknote, title: "overview.how.3.title", body: "overview.how.3.body", tile: "amber" },
+    { icon: Undo2, title: "overview.how.4.title", body: "overview.how.4.body", tile: "lilac" },
   ];
   return (
-    <section id="how" className="scroll-mt-20 bg-brand px-5 py-24 sm:px-8 lg:py-32">
+    <section id="how" className="scroll-mt-24 bg-brand px-5 py-24 sm:px-8 lg:py-32">
       <div className="mx-auto max-w-[1200px]">
         <SectionHead center lime eyebrow={t("landing.how.eyebrow")} title={t("landing.how.title")} body={t("landing.how.body")} />
         <ol className="relative mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -518,12 +512,7 @@ function How() {
                 className="relative rounded-[22px] border border-line bg-surface p-6 shadow-(--shadow-card) hover:-translate-y-1 hover:shadow-(--shadow-float)"
               >
                 <div className="flex items-center justify-between">
-                  <span
-                    className={cx("av-ping-ring grid size-14 place-items-center rounded-2xl text-navy", s.tile)}
-                    style={{ animationDelay: `${i * 1.15}s` }}
-                  >
-                    <Icon className="size-6" aria-hidden />
-                  </span>
+                  <IconTile icon={Icon} tone={s.tile} size="lg" className="av-ping-ring" style={{ animationDelay: `${i * 1.15}s` }} />
                   <span className="font-display text-4xl font-extrabold text-ink/[0.07]">0{i + 1}</span>
                 </div>
                 <h3 className="mt-6 text-lg font-bold text-ink">{t(s.title)}</h3>
@@ -548,7 +537,7 @@ function Numbers({ ex, config }: { ex: ExampleLoan; config: Config | null | unde
   ];
   const [chartRef, chartIn] = useInView<HTMLDivElement>("0px 0px -20% 0px");
   return (
-    <section id="numbers" className="relative isolate scroll-mt-20 overflow-hidden bg-navy-deep px-5 py-24 text-white sm:px-8 lg:py-32">
+    <section id="numbers" className="relative isolate scroll-mt-24 overflow-hidden bg-navy-deep px-5 py-24 text-white sm:px-8 lg:py-32">
       <div aria-hidden className="av-grid pointer-events-none absolute inset-0 -z-10 opacity-40" />
       <div className="mx-auto grid max-w-[1200px] items-center gap-14 lg:grid-cols-[0.9fr_1.1fr]">
         <div>
@@ -738,7 +727,7 @@ function WhyOnChain() {
     { icon: Zap, title: "landing.why.4.title", body: "landing.why.4.body" },
   ];
   return (
-    <section id="why" className="scroll-mt-20 bg-navy-deep px-5 py-24 text-white sm:px-8 lg:py-32">
+    <section id="why" className="scroll-mt-24 bg-navy-deep px-5 py-24 text-white sm:px-8 lg:py-32">
       <div className="relative mx-auto max-w-[1200px]">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
           <SectionHead dark eyebrow={t("landing.why.eyebrow")} title={t("landing.why.title")} />
@@ -749,9 +738,7 @@ function WhyOnChain() {
             const Icon = it.icon;
             return (
               <Reveal delay={i * 110} key={it.title} className="rounded-[22px] border border-white/10 bg-white/[0.04] p-6 hover:-translate-y-1 hover:bg-white/[0.07]">
-                <span className="grid size-12 place-items-center rounded-2xl bg-brand/15 text-brand">
-                  <Icon className="size-5" aria-hidden />
-                </span>
+                <IconTile icon={Icon} tone="brand" size="lg" className="shadow-[0_8px_22px_-6px_rgba(133,218,7,0.5)]" />
                 <h3 className="mt-6 text-lg font-bold text-white">{t(it.title)}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-white/60">{t(it.body)}</p>
               </Reveal>
@@ -845,7 +832,7 @@ function AppPreview() {
               <span className="size-2.5 rounded-full bg-brand/60" />
               <span className="ml-3 truncate font-mono text-[11px] text-faint">zafra-gilt.vercel.app/app</span>
             </div>
-            <Image src="/landing/app-dashboard.jpg" alt={t("landing.preview.alt")} width={1400} height={1118} sizes="(min-width: 1024px) 700px, 100vw" className="h-auto w-full" />
+            <Image src="/landing/app-dashboard-v2.jpg" alt={t("landing.preview.alt")} width={1400} height={1118} sizes="(min-width: 1024px) 700px, 100vw" className="h-auto w-full" />
           </div>
         </Reveal>
       </div>
@@ -899,26 +886,32 @@ function SpeedLegal() {
             </div>
           </Reveal>
         </div>
-        <div id="legal" className="scroll-mt-28">
-          <Reveal className="mt-8 rounded-[28px] border border-line bg-bg p-8 sm:p-10">
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">{t("landing.legal.eyebrow")}</p>
-            <h3 className="mt-3 text-2xl font-extrabold text-ink sm:text-3xl">{t("landing.legal.title")}</h3>
-            <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-mute">{t("landing.legal.body")}</p>
-            <div className="mt-8 grid gap-6 border-t border-line pt-8 sm:grid-cols-3">
-              {laws.map((l) => (
-                <div key={l.year} className="flex gap-4">
-                  <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-tile-lime text-brand-strong">
-                    <Gavel className="size-5" aria-hidden />
-                  </span>
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-faint">{l.year}</p>
-                    <h4 className="mt-0.5 font-bold text-ink">{t(l.title)}</h4>
-                    <p className="mt-1 text-[13px] leading-relaxed text-mute">{t(l.body)}</p>
-                  </div>
+        <div id="legal" className="scroll-mt-[34vh]">
+          <Reveal className="mt-6 rounded-[28px] border border-line bg-bg px-6 py-6 sm:px-8">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:gap-8">
+              <div className="flex items-center gap-4 lg:w-96 lg:shrink-0">
+                <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-tile-lime text-brand-strong">
+                  <Gavel className="size-5" aria-hidden />
+                </span>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">{t("landing.legal.eyebrow")}</p>
+                  <h3 className="mt-0.5 font-display text-xl font-extrabold leading-tight text-ink">{t("landing.legal.title")}</h3>
                 </div>
-              ))}
+              </div>
+              <div className="min-w-0 flex-1">
+                <ol className="flex flex-wrap items-center gap-x-2 gap-y-2">
+                  {laws.map((l, i) => (
+                    <li key={l.year} className="flex items-center gap-2">
+                      {i > 0 && <ArrowRight className="size-3.5 shrink-0 text-faint" aria-hidden />}
+                      <span className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-sm font-semibold text-ink">
+                        <span className="font-extrabold text-brand-strong">{l.year}</span> · {t(l.title)}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="mt-3 text-xs leading-relaxed text-faint">{t("landing.legal.note")}</p>
+              </div>
             </div>
-            <p className="mt-8 border-t border-line pt-5 text-xs leading-relaxed text-faint">{t("landing.legal.note")}</p>
           </Reveal>
         </div>
       </div>
@@ -928,46 +921,53 @@ function SpeedLegal() {
 
 function Trust() {
   const t = useT();
-  type Status = "real" | "sim" | "out" | "pending";
-  const rows: Array<[MessageKey, Status]> = [
-    ["landing.trust.r1", "real"],
-    ["landing.trust.r2", "real"],
-    ["landing.trust.r3", "sim"],
-    ["landing.trust.r4", "sim"],
-    ["landing.trust.r5", "out"],
-    ["landing.trust.r6", "pending"],
+  const groups: Array<{ label: MessageKey; dot: string; chip: string; items: MessageKey[] }> = [
+    { label: "landing.trust.s.real", dot: "bg-brand", chip: "border-brand/30 bg-tile-lime", items: ["landing.trust.r1", "landing.trust.r2"] },
+    { label: "landing.trust.s.sim", dot: "bg-warn", chip: "border-warn/30 bg-tile-amber", items: ["landing.trust.r3", "landing.trust.r4"] },
+    { label: "landing.trust.s.missing", dot: "bg-danger", chip: "border-line bg-sunken", items: ["landing.trust.r5", "landing.trust.r6"] },
   ];
-  const badge: Record<Status, { label: MessageKey; cls: string; icon: LucideIcon }> = {
-    real: { label: "landing.trust.s.real", cls: "bg-tile-lime text-brand-strong", icon: CircleCheck },
-    sim: { label: "landing.trust.s.sim", cls: "bg-tile-amber text-warn", icon: CircleDashed },
-    out: { label: "landing.trust.s.out", cls: "bg-sunken text-mute", icon: CircleDot },
-    pending: { label: "landing.trust.s.pending", cls: "bg-danger/10 text-danger", icon: CircleDot },
-  };
   const faqItems = [1, 2, 3, 4, 5] as const;
   const steps = [1, 2, 3, 4] as const;
   return (
-    <section id="transparency" className="scroll-mt-20 bg-bg px-5 py-24 sm:px-8 lg:py-28">
+    <section id="transparency" className="scroll-mt-24 bg-bg px-5 py-20 sm:px-8 lg:py-24">
       <div className="mx-auto max-w-[1200px]">
         <SectionHead eyebrow={t("landing.trust.eyebrow")} title={t("landing.trust.title")} body={t("landing.trust.body")} />
-        <div className="mt-12 grid items-start gap-6 lg:grid-cols-2">
-          <Reveal>
-            <ul className="divide-y divide-line overflow-hidden rounded-[24px] border border-line bg-surface shadow-(--shadow-card)">
-              {rows.map(([key, status]) => {
-                const b = badge[status];
-                const Icon = b.icon;
-                return (
-                  <li key={key} className="flex items-center justify-between gap-4 px-5 py-4 sm:px-6">
-                    <span className="text-[15px] font-semibold text-ink">{t(key)}</span>
-                    <span className={cx("inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold", b.cls)}>
-                      <Icon className="size-3.5" aria-hidden />
-                      {t(b.label)}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
+        <div className="mt-10 grid items-stretch gap-6 lg:grid-cols-[1.1fr_1fr]">
+          <Reveal className="flex flex-col rounded-[24px] border border-line bg-surface p-6 shadow-(--shadow-card) sm:p-7">
+            {groups.map((g, i) => (
+              <div key={g.label} className={i > 0 ? "mt-6" : ""}>
+                <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-mute">
+                  <span className={cx("size-2 rounded-full", g.dot)} aria-hidden />
+                  {t(g.label)}
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {g.items.map((k) => (
+                    <span key={k} className={cx("rounded-full border px-3.5 py-1.5 text-sm font-semibold text-ink", g.chip)}>{t(k)}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="mt-auto pt-7">
+              <div className="border-t border-line pt-6">
+                <p className="text-xs font-bold uppercase tracking-[0.14em] text-mute">{t("landing.roadmap.eyebrow")}</p>
+                <ol className="relative mt-5 grid gap-4 sm:grid-cols-4">
+                  <span aria-hidden className="absolute left-[8%] right-[8%] top-[13px] hidden h-px bg-line sm:block" />
+                  {steps.map((n) => (
+                    <li key={n} className="flex items-start gap-3 sm:flex-col sm:gap-2">
+                      <span className={cx("z-10 grid size-7 shrink-0 place-items-center rounded-full font-display text-[11px] font-extrabold ring-4 ring-surface", n === 4 ? "bg-navy text-brand" : "bg-tile-lime text-brand-strong")}>
+                        {n === 4 ? <Rocket className="size-3" aria-hidden /> : `0${n}`}
+                      </span>
+                      <div>
+                        <p className="text-sm font-bold leading-snug text-ink">{t(`landing.roadmap.${n}.title`)}</p>
+                        <p className="mt-0.5 text-xs leading-relaxed text-mute">{t(`landing.roadmap.${n}.body`)}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
           </Reveal>
-          <div id="faq" className="scroll-mt-28">
+          <div id="faq" className="scroll-mt-24">
             <Reveal delay={150} className="rounded-[24px] border border-line bg-surface shadow-(--shadow-card)">
               <div className="px-5 pt-5 sm:px-6">
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">{t("landing.faq.eyebrow")}</p>
@@ -986,25 +986,6 @@ function Trust() {
               </div>
             </Reveal>
           </div>
-        </div>
-        <div className="mt-14">
-          <Reveal>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-brand-strong">{t("landing.roadmap.eyebrow")}</p>
-            <h3 className="mt-1.5 text-2xl font-extrabold text-ink sm:text-3xl">{t("landing.roadmap.title")}</h3>
-          </Reveal>
-          <ol className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map((n, i) => (
-              <Reveal as="li" delay={i * 110} key={n} className="rounded-[20px] border border-line bg-surface p-5 hover:-translate-y-1 hover:shadow-(--shadow-card)">
-                <div className="flex items-center gap-3">
-                  <span className={cx("grid size-8 shrink-0 place-items-center rounded-full font-display text-xs font-extrabold", n === 4 ? "bg-navy text-brand" : "bg-tile-lime text-brand-strong")}>
-                    {n === 4 ? <Rocket className="size-3.5" aria-hidden /> : `0${n}`}
-                  </span>
-                  <h4 className="font-bold leading-snug text-ink">{t(`landing.roadmap.${n}.title`)}</h4>
-                </div>
-                <p className="mt-2.5 text-[13px] leading-relaxed text-mute">{t(`landing.roadmap.${n}.body`)}</p>
-              </Reveal>
-            ))}
-          </ol>
         </div>
       </div>
     </section>

@@ -4,13 +4,13 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
+  Coins,
   Compass,
   ExternalLink,
-  HandCoins,
   LayoutDashboard,
-  PiggyBank,
   SlidersHorizontal,
   Stamp,
+  Vault,
   type LucideIcon,
 } from "lucide-react";
 import { useT, type MessageKey } from "@/lib/i18n";
@@ -27,8 +27,8 @@ import { WalletButton } from "./wallet-button";
 type Item = { id: View; label: MessageKey; icon: LucideIcon };
 const MAIN: Item[] = [
   { id: "overview", label: "nav.overview", icon: LayoutDashboard },
-  { id: "borrow", label: "nav.borrow", icon: HandCoins },
-  { id: "earn", label: "nav.earn", icon: PiggyBank },
+  { id: "borrow", label: "nav.borrow", icon: Coins },
+  { id: "earn", label: "nav.earn", icon: Vault },
 ];
 const TOOLS: Item[] = [
   { id: "certifier", label: "nav.certifier", icon: Stamp },
@@ -80,7 +80,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const t = useT();
   const [view, setView] = useView();
   const current = [...MAIN, ...TOOLS].find((i) => i.id === view) ?? MAIN[0];
-  const isDemo = TOOLS.some((i) => i.id === view);
   const [tourOpen, setTourOpen] = useState(false);
   const openTour = () => setTourOpen(true);
   useTourAutoStart(view, setTourOpen);
@@ -155,10 +154,7 @@ export function AppShell({ children }: { children: ReactNode }) {
                 <ZafraMark className="size-9" />
               </Link>
               <div className="hidden min-w-0 sm:block">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-faint">
-                  {isDemo ? t("nav.demoTools") : t("shell.platform")}
-                </p>
-                <p className="truncate font-display text-[15px] font-bold text-ink">{t(current.label)}</p>
+                <p className="truncate font-display text-base font-bold text-ink">{t(current.label)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

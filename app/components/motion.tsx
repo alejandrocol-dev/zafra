@@ -34,7 +34,7 @@ export function CountUp({ value, format, className }: { value: number; format: (
   const v = useCountUp(value, inView);
   return (
     <span ref={ref} className={cx("tabular-nums", className)}>
-      {format(v)}
+      {format(inView ? v : value)}
     </span>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { CircleCheck, TriangleAlert } from "lucide-react";
+import { Coins, TrendingUp, Wheat } from "lucide-react";
 import { zafra, type Config, type PoolStats } from "@/lib/zafra";
 import { MIN_SOL_FOR_FEES } from "@/lib/constants";
 import { useFmt, useT } from "@/lib/i18n";
@@ -14,13 +14,19 @@ import {
   Button,
   Card,
   Field,
+  IconTile,
   Notice,
   PageHeader,
-  ProgressBar,
   Skeleton,
   Stat,
   StatGrid,
 } from "@/components/ui";
+
+const HOW: Array<{ key: "earn.how.1" | "earn.how.2" | "earn.how.3"; icon: typeof Coins; tone: "lime" | "sky" | "amber" }> = [
+  { key: "earn.how.1", icon: Coins, tone: "lime" },
+  { key: "earn.how.2", icon: TrendingUp, tone: "sky" },
+  { key: "earn.how.3", icon: Wheat, tone: "amber" },
+];
 
 export function InvestorView() {
   const t = useT();
@@ -68,24 +74,16 @@ export function InvestorView() {
             ) : null}
           </Card>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Card title={t("earn.how.title")}>
-              <ul className="space-y-3 text-sm text-mute">
-                {(["earn.how.1", "earn.how.2", "earn.how.3"] as const).map((k) => (
-                  <li key={k} className="flex gap-2.5">
-                    <CircleCheck className="mt-0.5 size-4 shrink-0 text-brand-strong" aria-hidden />
-                    {t(k)}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-            <Card tour="earn-risk" title={t("earn.risk.title")} tone="warn">
-              <div className="flex gap-2.5 text-sm text-mute">
-                <TriangleAlert className="mt-0.5 size-4 shrink-0 text-warn" aria-hidden />
-                <p>{t("earn.risk.body")}</p>
-              </div>
-            </Card>
-          </div>
+          <Card title={t("earn.how.title")}>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {HOW.map((s) => (
+                <div key={s.key} className="flex items-start gap-3 sm:flex-col sm:gap-2.5">
+                  <IconTile icon={s.icon} tone={s.tone} />
+                  <p className="text-sm leading-snug text-mute">{t(s.key)}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
 
         <div className="lg:col-span-2">
@@ -166,12 +164,12 @@ function PoolOverview({ stats, config }: { stats: PoolStats; config: Config }) {
   const t = useT();
   const f = useFmt();
   const apy = (config.annualInterestBps * stats.utilizationBps) / 10_000;
+  const total = Math.max(stats.totalLiquidity, 1);
+  const debtPct = Math.min(100, (stats.outstandingDebt / total) * 100);
   return (
     <div className="space-y-5">
-      <StatGrid>
+      <StatGrid cols={2}>
         <Stat label={t("earn.stat.total")} value={f.usdcRound(stats.totalLiquidity)} />
-        <Stat label={t("earn.stat.debt")} value={f.usdcRound(stats.outstandingDebt)} />
-        <Stat label={t("earn.stat.available")} value={f.usdcRound(stats.available)} />
         <Stat
           label={t("earn.stat.apy")}
           value={f.bps(apy)}
@@ -183,7 +181,20 @@ function PoolOverview({ stats, config }: { stats: PoolStats; config: Config }) {
           <span className="text-mute">{t("earn.utilization")}</span>
           <span className="font-semibold text-ink">{f.bps(stats.utilizationBps)}</span>
         </div>
-        <ProgressBar value={stats.utilizationBps / 10_000} />
+        <div className="flex h-3 w-full overflow-hidden rounded-full bg-sunken">
+          <div className="h-full bg-navy transition-all duration-500" style={{ width: `${debtPct}%` }} />
+          <div className="h-full flex-1 bg-brand/70" />
+        </div>
+        <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-mute">
+          <span className="inline-flex items-center gap-1.5">
+            <i className="size-2 rounded-sm bg-navy" aria-hidden />
+            {t("earn.stat.debt")} · {f.usdcRound(stats.outstandingDebt)}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <i className="size-2 rounded-sm bg-brand/70" aria-hidden />
+            {t("earn.stat.available")} · {f.usdcRound(stats.available)}
+          </span>
+        </div>
       </div>
     </div>
   );

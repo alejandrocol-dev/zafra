@@ -375,7 +375,7 @@ export const en = {
 
   // ---- price simulator
   "sim.title": "Price simulator",
-  "sim.subtitle": "Example loan: 100 t of soy taken at {price} USDC/t. Drag the price.",
+  "sim.subtitle": "Example loan: 100 t of soy taken at {price} USDC/t. The demo plays by itself — grab the slider to take over.",
   "sim.oracleBadge": "Simulated oracle",
   "sim.zone": "Liquidation zone",
   "sim.legend.threshold": "Liquidation threshold",
@@ -384,6 +384,8 @@ export const en = {
   "sim.collateral": "Collateral value",
   "sim.axis": "Soy price (USDC per ton)",
   "sim.reset": "Back to the oracle price ({price})",
+  "sim.play": "Play",
+  "sim.pause": "Pause",
   "sim.vsBase": "vs. price at borrowing",
 
   // ---- activity feed
@@ -530,7 +532,7 @@ export const en = {
   "landing.legal.note":
     "Zafra is a prototype and holds no registration. In production, warrants would be issued by a warehouse company listed in the official registry.",
   "landing.faq.eyebrow": "FAQ",
-  "landing.faq.title": "What reviewers usually ask.",
+  "landing.faq.title": "What everyone asks.",
   "landing.faq.q1": "Is this real money?",
   "landing.faq.a1":
     "No. Zafra runs on Solana devnet, Solana's test network. The USDC is test money with no value, but every action is a real transaction you can verify.",
@@ -558,7 +560,7 @@ export const en = {
   "landing.risk.eyebrow": "Price risk",
   "landing.risk.title": "What if the price drops? The contract doesn't improvise.",
   "landing.risk.body":
-    "Move the soy price and watch the loan. If the debt goes above 80% of the collateral value, anyone can liquidate it and the pool gets its capital back.",
+    "Watch the soy price rise and crash on its own — the same math the contract runs. If the debt goes above 80% of the collateral value, anyone can liquidate it and the pool gets its capital back.",
   "landing.sides.eyebrow": "Two sides, one pool",
   "landing.sides.title": "Producers get capital. Investors get real collateral.",
   "landing.sides.prod.title": "For producers",
@@ -606,6 +608,7 @@ export const en = {
   "landing.trust.s.sim": "Simulated",
   "landing.trust.s.out": "Not in this MVP",
   "landing.trust.s.pending": "Not audited",
+  "landing.trust.s.missing": "Not yet",
   "landing.cta.title": "The harvest exists. The capital doesn't.",
   "landing.cta.body": "Zafra closes that gap. Try it on devnet in two minutes: connect Phantom, issue a test warrant and take your first loan.",
   "landing.cta.github": "View the code",
@@ -632,14 +635,11 @@ export const en = {
   "tour.overview.3.title": "Live numbers from devnet",
   "tour.overview.3.body":
     "Pool liquidity, outstanding debt and tokenized grain are read straight from the program. Nothing here is mocked.",
-  "tour.overview.4.title": "Liquidation, made visible",
+  "tour.overview.4.title": "Every transaction is verifiable",
   "tour.overview.4.body":
-    "Drag the price. You'll see exactly where an example loan crosses the 80% threshold and becomes liquidatable.",
-  "tour.overview.5.title": "Every transaction is verifiable",
-  "tour.overview.5.body":
     "The latest program transactions. Each link opens Solana Explorer on devnet, so you can check them yourself.",
-  "tour.overview.6.title": "Connect Phantom on devnet",
-  "tour.overview.6.body":
+  "tour.overview.5.title": "Connect Phantom on devnet",
+  "tour.overview.5.body":
     "To act, use Phantom set to devnet — Solana's test network, where funds have no real value — with a little test SOL from the faucet for fees.",
   "tour.certifier.1.title": "A simulated role, on purpose",
   "tour.certifier.1.body":
@@ -671,9 +671,6 @@ export const en = {
   "tour.earn.2.title": "Supply USDC",
   "tour.earn.2.body":
     "Deposit test USDC into the pool. Interest and origination fees from loans flow back to it.",
-  "tour.earn.3.title": "Risks, stated plainly",
-  "tour.earn.3.body":
-    "Hackathon prototype: no withdrawals yet, simulated oracle and certifier, unaudited contract. That's the full tour — thanks for reviewing Zafra.",
 } as const;
 
 export type MessageKey = keyof typeof en;
@@ -1050,7 +1047,7 @@ export const es: Record<MessageKey, string> = {
 
   // ---- price simulator
   "sim.title": "Simulador de precio",
-  "sim.subtitle": "Préstamo de ejemplo: 100 t de soja tomadas a {price} USDC/t. Mové el precio.",
+  "sim.subtitle": "Préstamo de ejemplo: 100 t de soja tomadas a {price} USDC/t. La demo corre sola — agarrá el deslizador para tomar el control.",
   "sim.oracleBadge": "Oráculo simulado",
   "sim.zone": "Zona de liquidación",
   "sim.legend.threshold": "Umbral de liquidación",
@@ -1059,6 +1056,8 @@ export const es: Record<MessageKey, string> = {
   "sim.collateral": "Valor de la garantía",
   "sim.axis": "Precio de la soja (USDC por tonelada)",
   "sim.reset": "Volver al precio del oráculo ({price})",
+  "sim.play": "Reproducir",
+  "sim.pause": "Pausar",
   "sim.vsBase": "vs. precio al pedir",
 
   // ---- activity feed
@@ -1205,7 +1204,7 @@ export const es: Record<MessageKey, string> = {
   "landing.legal.note":
     "Zafra es un prototipo y no tiene ninguna inscripción. En producción, los warrants los emitiría una warrantera inscripta en el registro oficial.",
   "landing.faq.eyebrow": "Preguntas frecuentes",
-  "landing.faq.title": "Lo que suelen preguntar los jurados.",
+  "landing.faq.title": "Lo que todos preguntan.",
   "landing.faq.q1": "¿Es plata real?",
   "landing.faq.a1":
     "No. Zafra corre en Solana devnet, la red de prueba de Solana. El USDC es de prueba y no vale nada, pero cada acción es una transacción real que podés verificar.",
@@ -1233,7 +1232,7 @@ export const es: Record<MessageKey, string> = {
   "landing.risk.eyebrow": "Riesgo de precio",
   "landing.risk.title": "¿Y si el precio cae? El contrato no improvisa.",
   "landing.risk.body":
-    "Mové el precio de la soja y mirá qué pasa con el préstamo. Si la deuda supera el 80% del valor de la garantía, cualquiera puede liquidarla y el fondo recupera su capital.",
+    "Mirá cómo el precio de la soja sube y se desploma solo — con las mismas cuentas que hace el contrato. Si la deuda supera el 80% del valor de la garantía, cualquiera puede liquidarla y el fondo recupera su capital.",
   "landing.sides.eyebrow": "Dos lados, un mismo fondo",
   "landing.sides.title": "El productor consigue capital. El inversor, garantía real.",
   "landing.sides.prod.title": "Para productores",
@@ -1281,6 +1280,7 @@ export const es: Record<MessageKey, string> = {
   "landing.trust.s.sim": "Simulado",
   "landing.trust.s.out": "Fuera de este MVP",
   "landing.trust.s.pending": "Sin auditar",
+  "landing.trust.s.missing": "Todavía falta",
   "landing.cta.title": "La cosecha existe. El capital, no.",
   "landing.cta.body": "Zafra une las dos puntas. Probalo en devnet en dos minutos: conectá Phantom, emití un warrant de prueba y pedí tu primer préstamo.",
   "landing.cta.github": "Ver el código",
@@ -1307,14 +1307,11 @@ export const es: Record<MessageKey, string> = {
   "tour.overview.3.title": "Números en vivo de devnet",
   "tour.overview.3.body":
     "La liquidez del fondo, la deuda vigente y las toneladas tokenizadas se leen directo del programa. Acá no hay nada simulado.",
-  "tour.overview.4.title": "La liquidación, a la vista",
+  "tour.overview.4.title": "Cada transacción es verificable",
   "tour.overview.4.body":
-    "Mové el precio: vas a ver en qué punto un préstamo de ejemplo cruza el umbral del 80% y queda liquidable.",
-  "tour.overview.5.title": "Cada transacción es verificable",
-  "tour.overview.5.body":
     "Las últimas transacciones del programa. Cada link abre Solana Explorer en devnet para que las chequees vos.",
-  "tour.overview.6.title": "Conectá Phantom en devnet",
-  "tour.overview.6.body":
+  "tour.overview.5.title": "Conectá Phantom en devnet",
+  "tour.overview.5.body":
     "Para operar, usá Phantom en devnet —la red de prueba de Solana, donde los fondos no tienen valor real— con un poco de SOL de prueba del faucet para las comisiones.",
   "tour.certifier.1.title": "Un rol simulado, a propósito",
   "tour.certifier.1.body":
@@ -1346,7 +1343,4 @@ export const es: Record<MessageKey, string> = {
   "tour.earn.2.title": "Aportar USDC",
   "tour.earn.2.body":
     "Depositás USDC de prueba en el fondo. Los intereses y las comisiones de los préstamos vuelven a él.",
-  "tour.earn.3.title": "Los riesgos, sin vueltas",
-  "tour.earn.3.body":
-    "Prototipo de hackathon: todavía sin retiros, oráculo y certificadora simulados, contrato sin auditar. Ese es el recorrido completo: gracias por revisar Zafra.",
 };

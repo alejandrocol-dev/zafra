@@ -699,10 +699,20 @@ class ZafraRouter implements ZafraClient {
   /**
    * Reads on the public devnet RPC are rate-limited (HTTP 429), and several
    * screens ask for the same data at once. In real mode we dedupe identical
-   * in-flight/recent reads (short TTL) and retry 429s with backoff. Every write
-   * clears the cache so the UI never shows pre-transaction state.
+   * in-flight/recent reads (short TTL), serialize them through a small queue
+   * so they don't burst, and retry 429s with backoff. Every write clears the
+   * cache so the UI never shows pre-transaction state.
    */
   private readCache = new Map<string, { at: number; promise: Promise<unknown> }>();
+  private readQueue: Promise<unknown> = Promise.resolve();
+
+  /** Runs reads one at a time with a short gap, so page loads don't burst. */
+  private enqueue<T>(fn: () => Promise<T>): Promise<T> {
+    const run = this.readQueue.then(fn);
+    this.readQueue = run
+      .then(() => new Promise((r) => setTimeout(r, 150)), () => new Promise((r) => setTimeout(r, 150)));
+    return run;
+  }
 
   private read<T>(
     key: string,
@@ -714,7 +724,7 @@ class ZafraRouter implements ZafraClient {
     const hit = this.readCache.get(scoped);
     if (hit && Date.now() - hit.at < ttlMs) return hit.promise as Promise<T>;
     const promise = withTimeout(
-      withRateLimitRetry(() => this.target().then(fn)),
+      withRateLimitRetry(() => this.enqueue(() => this.target().then(fn))),
       READ_TIMEOUT_MS,
     );
     this.readCache.set(scoped, { at: Date.now(), promise });
@@ -782,7 +792,7 @@ class ZafraRouter implements ZafraClient {
  * A public-RPC request that never answers must surface as an error — otherwise
  * the UI sits on skeletons forever. Covers the whole retry sequence.
  */
-const READ_TIMEOUT_MS = 20_000;
+const READ_TIMEOUT_MS = 30_000;
 
 async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
@@ -801,9 +811,9 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   }
 }
 
-/** Retry only HTTP 429 / rate-limit failures, with growing delays (≈1.5 s, 3 s, 6 s). */
-async function withRateLimitRetry<T>(fn: () => Promise<T>, attempts = 4): Promise<T> {
-  let delayMs = 1_500;
+/** Retry only HTTP 429 / rate-limit failures, with growing jittered delays. */
+async function withRateLimitRetry<T>(fn: () => Promise<T>, attempts = 6): Promise<T> {
+  let delayMs = 800;
   for (let i = 0; ; i++) {
     try {
       return await fn();
@@ -811,8 +821,8 @@ async function withRateLimitRetry<T>(fn: () => Promise<T>, attempts = 4): Promis
       const msg = String((err as Error)?.message ?? err);
       const limited = /429|too many requests|rate.?limit/i.test(msg);
       if (!limited || i >= attempts - 1) throw err;
-      await new Promise((r) => setTimeout(r, delayMs));
-      delayMs *= 2;
+      await new Promise((r) => setTimeout(r, delayMs + Math.random() * 400));
+      delayMs = Math.min(delayMs * 2, 8_000);
     }
   }
 }

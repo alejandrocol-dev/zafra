@@ -3,6 +3,7 @@
 import {
   useState,
   type ButtonHTMLAttributes,
+  type CSSProperties,
   type InputHTMLAttributes,
   type ReactNode,
   type SelectHTMLAttributes,
@@ -17,6 +18,7 @@ import {
   Info,
   LoaderCircle,
   TriangleAlert,
+  type LucideIcon,
 } from "lucide-react";
 import { explorerAddressUrl, explorerTxUrl, shortenAddress, shortenSignature } from "@/lib/format";
 import { useT } from "@/lib/i18n";
@@ -105,8 +107,8 @@ export function PageHeader({
   return (
     <div data-tour="page-header" className="mb-7 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-ink sm:text-[32px]">{title}</h1>
-        {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-mute sm:text-base">{subtitle}</p>}
+        <h1 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">{title}</h1>
+        {subtitle && <p className="mt-2 max-w-2xl text-sm text-mute sm:text-base">{subtitle}</p>}
       </div>
       {actions}
     </div>
@@ -381,6 +383,43 @@ export function Notice({
   );
 }
 
+/* --------------------------------- icon tile ------------------------------- */
+
+export type IconTileTone = "lime" | "sky" | "amber" | "lilac" | "navy" | "danger" | "brand";
+
+const TILE_STYLE: Record<IconTileTone, string> = {
+  brand: "bg-gradient-to-br from-brand to-[#57ad04] text-navy ring-white/25",
+  lime: "bg-gradient-to-br from-[#f7fdea] to-tile-lime text-brand-strong ring-brand/25",
+  sky: "bg-gradient-to-br from-[#f0f8fe] to-tile-sky text-info ring-info/25",
+  amber: "bg-gradient-to-br from-[#fef9ea] to-tile-amber text-warn ring-warn/25",
+  lilac: "bg-gradient-to-br from-[#f5f3fe] to-tile-lilac text-[#5b4bb3] ring-[#8b7bd8]/30",
+  navy: "bg-gradient-to-br from-navy-soft to-navy text-brand ring-white/10",
+  danger: "bg-gradient-to-br from-rose-50 to-rose-100/80 text-danger ring-danger/25",
+};
+
+const TILE_SIZE = { sm: "size-9 rounded-xl", md: "size-11 rounded-2xl", lg: "size-14 rounded-2xl" } as const;
+const TILE_ICON = { sm: "size-[18px]", md: "size-5", lg: "size-6" } as const;
+
+export function IconTile({
+  icon: Icon,
+  tone = "lime",
+  size = "md",
+  className,
+  style,
+}: {
+  icon: LucideIcon;
+  tone?: IconTileTone;
+  size?: keyof typeof TILE_SIZE;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  return (
+    <span style={style} className={cx("grid shrink-0 place-items-center shadow-sm ring-1 ring-inset", TILE_STYLE[tone], TILE_SIZE[size], className)}>
+      <Icon className={TILE_ICON[size]} strokeWidth={2.1} aria-hidden />
+    </span>
+  );
+}
+
 export function EmptyState({
   icon,
   title,
@@ -395,7 +434,7 @@ export function EmptyState({
   return (
     <div className="flex flex-col items-center rounded-(--radius-card) border border-dashed border-line-strong bg-surface/60 px-6 py-12 text-center">
       {icon && (
-        <div className="mb-4 grid size-12 place-items-center rounded-full bg-brand/10 text-brand-strong">
+        <div className="mb-4 grid size-12 place-items-center rounded-2xl bg-gradient-to-br from-[#f7fdea] to-tile-lime text-brand-strong shadow-sm ring-1 ring-inset ring-brand/25">
           {icon}
         </div>
       )}

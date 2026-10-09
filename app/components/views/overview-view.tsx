@@ -1,19 +1,17 @@
 "use client";
 
-import type { ReactNode } from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import {
   ArrowRight,
-  Banknote,
   CircleCheck,
-  FileCheck2,
+  Coins,
+  Gauge,
   Gavel,
-  HandCoins,
-  Landmark,
   Lock,
-  Percent,
+  Stamp,
   TrendingDown,
   Undo2,
+  Vault,
   Wheat,
   type LucideIcon,
 } from "lucide-react";
@@ -32,9 +30,8 @@ import { useAsyncData } from "@/lib/use-async";
 import { positionRisk } from "@/lib/risk";
 import { ActivityFeed } from "@/components/activity-feed";
 import { BarList, Donut, Legend } from "@/components/charts";
-import { RiskSimulator } from "@/components/risk-simulator";
 import { ZafraMark } from "@/components/logo";
-import { Badge, Button, Card, Notice, ProgressBar, Skeleton, cx } from "@/components/ui";
+import { Badge, Button, Card, IconTile, Notice, ProgressBar, Skeleton, cx, type IconTileTone } from "@/components/ui";
 
 export function OverviewView() {
   const t = useT();
@@ -68,15 +65,6 @@ export function OverviewView() {
           <Kpis loading={loading && !data} stats={data?.stats} config={data?.config} warrants={data?.warrants} />
         )}
       </div>
-
-      <Card
-        tour="simulator"
-        title={t("sim.title")}
-        subtitle={t("sim.subtitle", { price: data?.config.pricePerTon ?? DEFAULT_PRICE_PER_TON })}
-        actions={<Badge tone="warn">{t("sim.oracleBadge")}</Badge>}
-      >
-        <RiskSimulator config={data?.config} oraclePrice={data?.config.pricePerTon} />
-      </Card>
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card title={t("dash.pool.title")} subtitle={t("dash.pool.subtitle")}>
@@ -128,8 +116,8 @@ export function OverviewView() {
 /* --------------------------------- Hero / demo ------------------------------- */
 
 const STEP_STYLE: Array<{ tile: string; icon: LucideIcon; view: View }> = [
-  { tile: "bg-tile-lime", icon: FileCheck2, view: "certifier" },
-  { tile: "bg-tile-sky", icon: Banknote, view: "borrow" },
+  { tile: "bg-tile-lime", icon: Stamp, view: "certifier" },
+  { tile: "bg-tile-sky", icon: Coins, view: "borrow" },
   { tile: "bg-tile-amber", icon: TrendingDown, view: "admin" },
   { tile: "bg-tile-lilac", icon: Gavel, view: "borrow" },
 ];
@@ -207,7 +195,9 @@ function DemoHero({ onGo }: { onGo: (v: View) => void }) {
                   {isDone ? (
                     <CircleCheck className="size-5 text-brand-strong" aria-label={t("demo.done")} />
                   ) : (
-                    <Icon className="size-5 text-navy/70" aria-hidden />
+                    <span className="grid size-8 place-items-center rounded-lg bg-white/60 text-navy shadow-sm">
+                      <Icon className="size-4" aria-hidden />
+                    </span>
                   )}
                 </div>
                 <p className="mt-4 font-display text-[15px] font-bold leading-snug">{t(`demo.step${n}.title` as MessageKey)}</p>
@@ -262,23 +252,20 @@ function Kpis({
       </div>
     );
   const tons = warrants.reduce((s, w) => s + w.tons, 0);
-  const items: Array<{ icon: LucideIcon; tile: string; label: string; value: string; hint: string }> = [
-    { icon: Landmark, tile: "bg-tile-lime text-brand-strong", label: t("overview.kpi.liquidity"), value: f.usdcRound(stats.available), hint: t("overview.kpi.liquidityHint") },
-    { icon: HandCoins, tile: "bg-tile-sky text-info", label: t("overview.kpi.debt"), value: f.usdcRound(stats.outstandingDebt), hint: t("overview.kpi.debtHint") },
-    { icon: Wheat, tile: "bg-tile-amber text-warn", label: t("overview.kpi.tons"), value: f.tons(tons), hint: t("overview.kpi.tonsHint") },
-    { icon: Percent, tile: "bg-tile-lilac text-navy", label: t("overview.kpi.ltv"), value: f.bps(config.ltvBps), hint: t("overview.kpi.ltvHint", { liq: f.bps(config.liqThresholdBps) }) },
+  const items: Array<{ icon: LucideIcon; tone: IconTileTone; label: string; value: string; hint: string }> = [
+    { icon: Vault, tone: "lime", label: t("overview.kpi.liquidity"), value: f.usdcRound(stats.available), hint: t("overview.kpi.liquidityHint") },
+    { icon: Coins, tone: "sky", label: t("overview.kpi.debt"), value: f.usdcRound(stats.outstandingDebt), hint: t("overview.kpi.debtHint") },
+    { icon: Wheat, tone: "amber", label: t("overview.kpi.tons"), value: f.tons(tons), hint: t("overview.kpi.tonsHint") },
+    { icon: Gauge, tone: "lilac", label: t("overview.kpi.ltv"), value: f.bps(config.ltvBps), hint: t("overview.kpi.ltvHint", { liq: f.bps(config.liqThresholdBps) }) },
   ];
   return (
     <section aria-label="Live metrics" className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       {items.map((it) => {
-        const Icon = it.icon;
         return (
           <div key={it.label} className="rounded-2xl border border-line bg-surface p-5 shadow-(--shadow-card)">
             <div className="flex items-start justify-between gap-3">
               <p className="text-xs font-semibold text-mute">{it.label}</p>
-              <span className={cx("grid size-9 shrink-0 place-items-center rounded-xl", it.tile)}>
-                <Icon className="size-[18px]" aria-hidden />
-              </span>
+              <IconTile icon={it.icon} tone={it.tone} size="sm" />
             </div>
             <p className="mt-2 font-display text-2xl font-extrabold tracking-tight text-ink sm:text-[26px]">{it.value}</p>
             <p className="mt-1 text-xs text-faint">{it.hint}</p>
@@ -388,15 +375,15 @@ function WarrantBars({ warrants }: { warrants: Warrant[] }) {
 function HowItWorks() {
   const t = useT();
   const f = useFmt();
-  const steps: Array<{ icon: ReactNode; title: string; body: string }> = [
-    { icon: <FileCheck2 className="size-5" />, title: t("overview.how.1.title"), body: t("overview.how.1.body") },
-    { icon: <Lock className="size-5" />, title: t("overview.how.2.title"), body: t("overview.how.2.body") },
+  const steps: Array<{ icon: LucideIcon; title: string; body: string }> = [
+    { icon: Stamp, title: t("overview.how.1.title"), body: t("overview.how.1.body") },
+    { icon: Lock, title: t("overview.how.2.title"), body: t("overview.how.2.body") },
     {
-      icon: <Banknote className="size-5" />,
+      icon: Coins,
       title: t("overview.how.3.title"),
       body: t("overview.how.3.body", { ltv: f.bps(7000) }),
     },
-    { icon: <Undo2 className="size-5" />, title: t("overview.how.4.title"), body: t("overview.how.4.body") },
+    { icon: Undo2, title: t("overview.how.4.title"), body: t("overview.how.4.body") },
   ];
   return (
     <div>
@@ -408,7 +395,7 @@ function HowItWorks() {
             className="relative rounded-(--radius-card) border border-line bg-surface p-5 shadow-(--shadow-card)"
           >
             <div className="mb-4 flex items-center justify-between">
-              <span className="grid size-10 place-items-center rounded-xl bg-navy text-brand">{s.icon}</span>
+              <IconTile icon={s.icon} tone="navy" size="sm" className="size-10" />
               <span className="font-display text-sm font-bold text-faint">0{i + 1}</span>
             </div>
             <h3 className="text-base font-bold text-ink">{s.title}</h3>

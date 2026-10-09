@@ -15,13 +15,13 @@ import { Button, cx } from "@/components/ui";
 type Step = { target?: string };
 const TOURS: Record<View, { steps: Step[]; next?: View }> = {
   overview: {
-    steps: [{}, { target: "demo" }, { target: "kpis" }, { target: "simulator" }, { target: "activity" }, { target: "wallet" }],
+    steps: [{}, { target: "demo" }, { target: "kpis" }, { target: "activity" }, { target: "wallet" }],
     next: "certifier",
   },
   certifier: { steps: [{ target: "cert-role" }, { target: "cert-form" }, { target: "cert-how" }], next: "borrow" },
   borrow: { steps: [{ target: "page-header" }, { target: "borrow-main" }], next: "admin" },
   admin: { steps: [{ target: "admin-oracle" }, { target: "admin-price" }, { target: "admin-loans" }], next: "earn" },
-  earn: { steps: [{ target: "earn-pool" }, { target: "earn-deposit" }, { target: "earn-risk" }] },
+  earn: { steps: [{ target: "earn-pool" }, { target: "earn-deposit" }] },
 };
 
 /* ------------------------------ persistence ------------------------------- */
